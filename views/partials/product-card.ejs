@@ -1,0 +1,39 @@
+<!-- Codex, GPT-5.5 High, OpenAI. -->
+<article class="product-card">
+  <a class="product-media" href="/products/<%= product._id %>">
+    <img src="<%= product.imageUrl %>" alt="<%= product.name %>">
+    <span class="condition-badge <%= product.condition === 'used' ? 'used' : 'new' %>">
+      <%= product.condition==='used' ? '二手' : '新品' %>
+    </span>
+  </a>
+  <div class="product-body">
+    <div class="product-title-row">
+      <h3><a href="/products/<%= product._id %>">
+          <%= product.name %>
+        </a></h3>
+      <strong>¥<%= product.price.toFixed(2) %></strong>
+    </div>
+    <p>
+      <%= product.description %>
+    </p>
+    <div class="product-meta">
+      <span>
+        <%= product.category %>
+      </span>
+      <span>库存 <%= product.stock %></span>
+      <span class="seller-chip"><i></i>
+        <%= product.sellerName %>
+      </span>
+    </div>
+    <!-- Antigraity, Gemini 3.1 Pro (high), Google.：库存为0时卡片显示已售罄 -->
+    <% if (product.stock> 0) { %>
+      <form action="/cart/add/<%= product._id %>" method="POST">
+        <button class="button primary full" type="submit">加入购物车</button>
+      </form>
+      <% } else { %>
+        <button class="button ghost full" disabled>已售罄</button>
+        <% } %>
+          <!-- end: Antigraity, Gemini 3.1 Pro (high), Google. -->
+  </div>
+</article>
+<!-- end:Codex, GPT-5.5 High, OpenAI. -->

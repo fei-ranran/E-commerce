@@ -1,0 +1,58 @@
+<!-- Codex, GPT-5.5 High, OpenAI. -->
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>
+    <%= title %>
+  </title>
+  <link rel="stylesheet" href="/css/style.css">
+  <script src="/js/app.js" defer></script>
+</head>
+
+<body>
+  <header class="site-header">
+    <div class="site-header-inner">
+      <a class="brand" href="/">
+        <span class="brand-mark">C</span>
+        <span>Cream Market</span>
+      </a>
+      <button class="nav-toggle" type="button" aria-label="打开导航" data-nav-toggle>☰</button>
+      <nav class="site-nav" data-nav>
+        <a class="<%= active === 'home' ? 'active' : '' %>" href="/">商城</a>
+        <a class="<%= active === 'second' ? 'active' : '' %>" href="/second-hand">二手交易</a>
+        <a class="<%= active === 'cart' ? 'active' : '' %>" href="/cart">购物车</a>
+        <a class="<%= active === 'sell' ? 'active' : '' %>" href="/products/new">发布</a>
+        <% if (currentUser) { %>
+          <!-- Antigravity, Claude Sonnet 4.6 (thinking), Anthropic. 新增：我的订单导航入口 -->
+          <a class="<%= active === 'orders' ? 'active' : '' %>" href="/orders/mine">我的订单</a>
+          <!-- end: Antigravity, Claude Sonnet 4.6 (thinking), Anthropic. 新增 -->
+          <a class="<%= active === 'mine' ? 'active' : '' %>" href="/products/mine">我的发布</a>
+          <form class="inline-form" action="/logout" method="POST">
+            <button class="nav-button" type="submit">
+              <%= currentUser.username %> 退出
+            </button>
+          </form>
+          <form class="inline-form" action="/delete-account" method="POST" onsubmit="return confirm('确定要永久注销账户吗？此操作不可恢复！')">
+            <button class="nav-button" type="submit" style="color:red; background:none; border:none;">
+              注销账户
+            </button>
+          </form>
+          <% } else { %>
+            <a class="<%= active === 'login' ? 'active' : '' %>" href="/login">登录</a>
+            <a class="nav-strong <%= active === 'register' ? 'active' : '' %>" href="/register">注册</a>
+            <% } %>
+      </nav>
+    </div>
+  </header>
+  <!-- Antigraity, Gemini 3.1 Pro (high), Google. -->
+  <% if (typeof flashMsg !== 'undefined' && flashMsg) { %>
+    <div class="flash-toast">
+      <%= flashMsg %>
+    </div>
+  <% } %>
+  <!-- end: Antigraity, Gemini 3.1 Pro (high), Google. -->
+  <main class="page-shell">
+    <!-- end:Codex, GPT-5.5 High, OpenAI. -->

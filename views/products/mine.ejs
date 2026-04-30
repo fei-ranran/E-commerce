@@ -1,0 +1,49 @@
+<!-- Codex, GPT-5.5 High, OpenAI. -->
+<%- include('../partials/header', { title, active, currentUser }) %>
+
+<section class="manage-page">
+  <div class="section-heading wide">
+    <div>
+      <p class="eyebrow">Manage</p>
+      <h1>我的发布</h1>
+    </div>
+    <a class="button primary" href="/products/new">发布商品</a>
+  </div>
+
+  <% if (products.length === 0) { %>
+    <div class="empty-state">
+      <p>你还没有发布商品。</p>
+      <a class="button primary" href="/products/new">去发布</a>
+    </div>
+  <% } else { %>
+    <div class="manage-list">
+      <% products.forEach(product => { %>
+        <article class="manage-item">
+          <a class="manage-media" href="/products/<%= product._id %>">
+            <img src="<%= product.imageUrl %>" alt="<%= product.name %>">
+          </a>
+          <div class="manage-content">
+            <div>
+              <h3><a href="/products/<%= product._id %>"><%= product.name %></a></h3>
+              <p><%= product.description %></p>
+            </div>
+            <div class="product-meta">
+              <span><%= product.condition === 'used' ? '二手' : '新品' %></span>
+              <span><%= product.category %></span>
+              <span>库存 <%= product.stock %></span>
+            </div>
+          </div>
+          <strong class="manage-price">¥<%= product.price.toFixed(2) %></strong>
+          <div class="manage-actions">
+            <a class="button secondary" href="/products/<%= product._id %>/edit">编辑</a>
+            <form action="/products/<%= product._id %>?_method=DELETE" method="POST">
+              <button class="button danger" type="submit">删除</button>
+            </form>
+          </div>
+        </article>
+      <% }) %>
+    </div>
+  <% } %>
+</section>
+
+<%- include('../partials/footer') %>

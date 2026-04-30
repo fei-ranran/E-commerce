@@ -1,0 +1,61 @@
+<!-- Codex, GPT-5.5 High, OpenAI. -->
+<%- include('../partials/header', { title, active, currentUser }) %>
+
+  <section class="cart-layout">
+    <div class="section-heading wide">
+      <div>
+        <p class="eyebrow">Cart</p>
+        <h1>购物车</h1>
+      </div>
+      <% if (cart.items.length> 0) { %>
+        <form action="/cart/clear" method="POST">
+          <button class="button ghost" type="submit">清空</button>
+        </form>
+        <% } %>
+    </div>
+
+    <% if (cart.items.length===0) { %>
+      <div class="empty-state">购物车为空，先去挑选商品。</div>
+      <% } else { %>
+        <div class="cart-list">
+          <% cart.items.forEach(item=> { %>
+            <article class="cart-item">
+              <img src="<%= item.product.imageUrl %>" alt="<%= item.product.name %>">
+              <div>
+                <h3><a href="/products/<%= item.product._id %>">
+                    <%= item.product.name %>
+                  </a></h3>
+                <p>
+                  <%= item.product.condition==='used' ? '二手' : '新品' %> · <%= item.product.category %>
+                </p>
+              </div>
+              <strong>¥<%= item.product.price.toFixed(2) %></strong>
+              <div class="quantity-controls">
+                <form action="/cart/decrease/<%= item.product._id %>" method="POST">
+                  <button type="submit">−</button>
+                </form>
+                <span>
+                  <%= item.quantity %>
+                </span>
+                <form action="/cart/add/<%= item.product._id %>" method="POST">
+                  <button type="submit">+</button>
+                </form>
+              </div>
+              <strong>¥<%= item.subtotal.toFixed(2) %></strong>
+              <form action="/cart/remove/<%= item.product._id %>" method="POST">
+                <button class="icon-button" type="submit" title="移除">×</button>
+              </form>
+            </article>
+            <% }) %>
+        </div>
+
+        <aside class="checkout-panel">
+          <span>合计</span>
+          <strong>¥<%= cart.total.toFixed(2) %></strong>
+          <a class="button primary" href="/orders/checkout">去结算</a>
+        </aside>
+        <% } %>
+  </section>
+
+  <%- include('../partials/footer') %>
+    <!-- end:Codex, GPT-5.5 High, OpenAI. -->

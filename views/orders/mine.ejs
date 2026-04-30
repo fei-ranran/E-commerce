@@ -1,0 +1,52 @@
+<!-- Codex, GPT-5.5 High, OpenAI. -->
+<%- include('../partials/header', { title, active, currentUser }) %>
+
+<section class="manage-page">
+  <div class="section-heading wide">
+    <div>
+      <p class="eyebrow">My Orders</p>
+      <h1>我的订单</h1>
+    </div>
+    <span class="result-count"><%= orders.length %> 笔订单</span>
+  </div>
+
+  <% if (orders.length === 0) { %>
+    <div class="empty-state">
+      <p>暂时没有订单记录。</p>
+      <a class="button primary" href="/">去逛逛</a>
+    </div>
+  <% } %>
+
+  <div class="order-list">
+    <% orders.forEach(order => { %>
+      <article class="order-card">
+        <div class="order-card-head">
+          <div class="order-card-meta">
+            <span class="order-id">订单号 <code><%= order._id %></code></span>
+            <span class="order-time"><%= order.createdAt.toLocaleString('zh-CN') %></span>
+          </div>
+          <span class="order-status-badge"><%= order.status %></span>
+        </div>
+
+        <div class="order-items-preview">
+          <% order.items.forEach(item => { %>
+            <div class="order-item-row">
+              <span class="order-item-name"><%= item.name %></span>
+              <span class="order-item-cond <%= item.condition %>"><%= item.condition === 'used' ? '二手' : '新品' %></span>
+              <span class="order-item-qty">× <%= item.quantity %></span>
+              <span class="order-item-price">¥<%= item.price.toFixed(2) %></span>
+            </div>
+          <% }) %>
+        </div>
+
+        <div class="order-card-foot">
+          <span class="order-total">实付 <strong>¥<%= order.total.toFixed(2) %></strong></span>
+          <a class="button ghost" href="/orders/<%= order._id %>">查看详情</a>
+        </div>
+      </article>
+    <% }) %>
+  </div>
+</section>
+
+<%- include('../partials/footer') %>
+<!-- end:Codex, GPT-5.5 High, OpenAI. -->

@@ -1,0 +1,32 @@
+<!-- Codex, GPT-5.5 High, OpenAI. -->
+<%- include('../partials/header', { title, active, currentUser }) %>
+
+<section class="auth-page">
+  <div class="form-copy">
+    <p class="eyebrow">Account</p>
+    <h1>登录账号</h1>
+    <p class="lead">登录后发布商品时会自动使用你的用户名作为卖家名称。</p>
+  </div>
+  <form class="app-form auth-form" action="/login" method="POST">
+    <% if (message) { %>
+      <div class="message"><%= message %></div>
+    <% } %>
+    <label>
+      用户名
+      <input required type="text" name="username">
+    </label>
+    <label>
+      邮箱
+      <input type="email" name="email" >
+    </label>
+    <label>
+      密码
+      <input required type="password" name="password">
+    </label>
+    <button class="button primary full" type="submit">登录</button>
+    <a class="text-link" href="/register">还没有账号，去注册</a>
+  </form>
+</section>
+
+<%- include('../partials/footer') %>
+<!-- end:Codex, GPT-5.5 High, OpenAI. -->

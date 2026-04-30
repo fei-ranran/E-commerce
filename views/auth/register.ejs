@@ -1,0 +1,42 @@
+<!-- Codex, GPT-5.5 High, OpenAI. -->
+<%- include('../partials/header', { title, active, currentUser }) %>
+
+  <section class="auth-page">
+    <div class="form-copy">
+      <p class="eyebrow">Account</p>
+      <h1>创建账号</h1>
+    </div>
+    <form class="app-form auth-form" action="/register" method="POST">
+      <% if (message) { %>
+        <div class="message">
+          <%= message %>
+        </div>
+        <% } %>
+          <label>
+            用户名
+            <input required type="text" name="username">
+          </label>
+          <label>
+            邮箱
+            <input required type="email" name="email">
+          </label>
+          <label>
+             密码
+            <input type="password" name="password" id="passwordInput" required>
+            <div class="form-hint" id="passwordHint">
+              密码需为 8-20 位，包含大小写字母和数字
+            </div>
+            <ul id="passwordRules" style="font-size: 12px; padding-left: 18px; margin: 6px 0; color: var(--muted);">
+              <li id="ruleLength">长度 8-20 位</li>
+              <li id="ruleUpper">包含大写字母 (A-Z)</li>
+              <li id="ruleLower">包含小写字母 (a-z)</li>
+              <li id="ruleDigit">包含数字 (0-9)</li>
+            </ul>
+          </label>
+          <button class="button primary full" type="submit">注册并登录</button>
+          <a class="text-link" href="/login">已有账号，去登录</a>
+    </form>
+  </section>
+
+  <%- include('../partials/footer') %>
+    <!-- end:Codex, GPT-5.5 High, OpenAI. -->

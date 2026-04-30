@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="660" viewBox="0 0 960 660">
+  <rect width="960" height="660" fill="#d8f0ec"/>
+  <rect x="180" y="160" width="600" height="340" rx="22" fill="#ffffff"/>
+  <path d="M260 420h440l-120-145-90 96-70-76z" fill="#0f6b55" opacity=".8"/>
+  <circle cx="335" cy="238" r="46" fill="#c97a1e"/>
+  <text x="480" y="560" text-anchor="middle" font-family="Arial" font-size="42" font-weight="700" fill="#17211f">Cream Market</text>
+</svg>

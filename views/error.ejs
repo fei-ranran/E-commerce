@@ -1,0 +1,15 @@
+<!-- Codex, GPT-5.5 High, OpenAI. -->
+<%- include('partials/header', { title, active, currentUser }) %>
+
+  <section class="empty-state not-found">
+    <p class="eyebrow">Server</p>
+    <h1>系统暂不可用</h1>
+    <p>请稍后重试或联系管理员。</p>
+    <p class="error-message">
+      <%= message %>
+    </p>
+    <a class="button primary" href="/">重新尝试</a>
+  </section>
+
+  <%- include('partials/footer') %>
+    <!-- end:Codex, GPT-5.5 High, OpenAI. -->

@@ -1,0 +1,55 @@
+<!-- Codex, GPT-5.5 High, OpenAI. -->
+<%- include('partials/header', { title, active, currentUser }) %>
+
+  <section class="storefront second-layout">
+    <aside class="filter-panel">
+      <p class="eyebrow">Second-hand</p>
+      <h1>二手交易</h1>
+      <form class="filter-form" action="/second-hand" method="GET">
+        <label>
+          搜索二手商品
+          <input type="search" name="keyword" value="<%= query.keyword || '' %>" placeholder="搜索商品或发布者">
+        </label>
+        <label>
+          分类
+          <select name="category">
+            <option value="">全部分类</option>
+            <% categories.forEach(category=> { %>
+              <option value="<%= category %>" <%=query.category===category ? 'selected' : '' %>><%= category %>
+              </option>
+              <% }) %>
+          </select>
+        </label>
+        <button class="button primary" type="submit">筛选商品</button>
+        <a class="button ghost" href="/second-hand">重置</a>
+      </form>
+    </aside>
+
+    <section class="product-section">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Used Items</p>
+          <h2>二手专区</h2>
+        </div>
+        <div class="heading-actions">
+          <span class="result-count">
+            <%= products.length %> 件商品
+          </span>
+          <a class="text-link" href="/products/new">我要转卖</a>
+        </div>
+      </div>
+
+      <% if (products.length===0) { %>
+        <div class="empty-state">暂时没有符合条件的二手商品。</div>
+        <% } %>
+
+          <div class="product-grid">
+            <% products.forEach(product=> { %>
+              <%- include('partials/product-card', { product }) %>
+                <% }) %>
+          </div>
+    </section>
+  </section>
+
+  <%- include('partials/footer') %>
+    <!-- end: Codex, GPT-5.5 High, OpenAI. -->

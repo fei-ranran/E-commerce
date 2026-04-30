@@ -1,0 +1,49 @@
+<!-- Codex, GPT-5.5 High, OpenAI. -->
+<%- include('../partials/header', { title, active, currentUser }) %>
+
+  <section class="checkout-layout">
+    <div class="form-copy">
+      <p class="eyebrow">Checkout</p>
+      <h1>提交订单</h1>
+    </div>
+
+    <form class="app-form" action="/orders" method="POST">
+      <% if (message) { %>
+        <div class="message">
+          <%= message %>
+        </div>
+        <% } %>
+          <label>
+            收货人
+            <input required type="text" name="customerName" value="<%= currentUser ? currentUser.username : '' %>">
+          </label>
+          <label>
+            联系电话
+            <input required type="text" name="phone">
+          </label>
+          <label>
+            收货地址
+            <textarea required name="address" rows="4"></textarea>
+          </label>
+          <button class="button primary full" type="submit">提交订单</button>
+    </form>
+
+    <aside class="order-summary">
+      <h2>订单摘要</h2>
+      <% cart.items.forEach(item=> { %>
+        <div class="summary-row">
+          <span>
+            <%= item.product.name %> × <%= item.quantity %>
+          </span>
+          <strong>¥<%= item.subtotal.toFixed(2) %></strong>
+        </div>
+        <% }) %>
+          <div class="summary-total">
+            <span>合计</span>
+            <strong>¥<%= cart.total.toFixed(2) %></strong>
+          </div>
+    </aside>
+  </section>
+
+  <%- include('../partials/footer') %>
+    <!-- end:Codex, GPT-5.5 High, OpenAI. -->

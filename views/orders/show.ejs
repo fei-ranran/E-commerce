@@ -1,0 +1,36 @@
+<!-- Codex, GPT-5.5 High, OpenAI. -->
+<%- include('../partials/header', { title, active, currentUser }) %>
+
+  <section class="order-detail">
+    <p class="eyebrow">Order</p>
+    <h1>订单已提交</h1>
+    <div class="order-meta">
+      <span>订单号：<%= order._id %></span>
+      <span>状态：<%= order.status %></span>
+      <span>时间：<%= order.createdAt.toLocaleString('zh-CN') %></span>
+    </div>
+    <div class="cart-list compact">
+      <% order.items.forEach(item=> { %>
+        <article class="cart-item">
+          <div>
+            <h3>
+              <%= item.name %>
+            </h3>
+            <p>
+              <%= item.condition==='used' ? '二手' : '新品' %>
+            </p>
+          </div>
+          <strong>¥<%= item.price.toFixed(2) %></strong>
+          <span>× <%= item.quantity %></span>
+        </article>
+        <% }) %>
+    </div>
+    <div class="summary-total">
+      <span>实付</span>
+      <strong>¥<%= order.total.toFixed(2) %></strong>
+    </div>
+    <a class="button primary" href="/">继续购物</a>
+  </section>
+
+  <%- include('../partials/footer') %>
+    <!-- end:Codex, GPT-5.5 High, OpenAI. -->

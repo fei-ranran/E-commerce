@@ -1,0 +1,73 @@
+<!-- Codex, GPT-5.5 High, OpenAI. -->
+<%- include('../partials/header', { title, active, currentUser }) %>
+
+<section class="form-page">
+  <div class="form-copy">
+    <p class="eyebrow">Product Form</p>
+    <h1><%= title %></h1>
+  </div>
+
+  <form class="app-form" action="<%= action %>" method="<%= method %>">
+    <div class="seller-strip">
+      <span>卖家名称</span>
+      <strong><%= currentUser.username %></strong>
+    </div>
+    <label>
+      商品名称
+      <input required type="text" name="name" value="<%= product.name || '' %>">
+    </label>
+    <label>
+      商品描述
+      <textarea required name="description" rows="5"><%= product.description || '' %></textarea>
+    </label>
+    <div class="form-grid">
+      <label>
+        价格
+        <input required type="number" name="price" min="0" step="0.01" value="<%= product.price || '' %>">
+      </label>
+      <label>
+        库存
+        <input required type="number" name="stock" min="0" value="<%= product.stock || 1 %>">
+      </label>
+    </div>
+    <div class="form-grid">
+      <label>
+        分类
+        <input required type="text" name="category" value="<%= product.category || '' %>" placeholder="数码设备 / 二手书籍">
+      </label>
+      <label>
+        成色
+        <select name="condition">
+          <option value="new" <%= product.condition === 'new' ? 'selected' : '' %>>新品</option>
+          <option value="used" <%= product.condition === 'used' ? 'selected' : '' %>>二手</option>
+        </select>
+      </label>
+    </div>
+    <label>
+      商品图片
+      <span class="upload-box">
+        <input type="file" accept="image/*" data-image-input>
+        <input type="hidden" name="imageUrl" value="<%= product.imageUrl || '' %>" data-image-value>
+        <span>选择图片</span>
+      </span>
+    </label>
+    <div class="image-preview <%= product.imageUrl ? '' : 'empty' %>" data-image-preview>
+      <% if (product.imageUrl) { %>
+        <img src="<%= product.imageUrl %>" alt="商品图片预览">
+      <% } else { %>
+        <span>未选择图片</span>
+      <% } %>
+    </div>
+    <p class="form-hint" data-image-hint>支持常见图片格式，建议小于 2MB。</p>
+    <label>
+      标签
+      <input type="text" name="tags" value="<%= product.tags ? product.tags.join(', ') : '' %>" placeholder="二手, 教材, linux">
+    </label>
+    <div class="action-row">
+      <button class="button primary" type="submit"><%= buttonText %></button>
+      <a class="button ghost" href="/">取消</a>
+    </div>
+  </form>
+</section>
+
+<%- include('../partials/footer') %>
