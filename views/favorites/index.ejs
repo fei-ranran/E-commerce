@@ -1,0 +1,100 @@
+<%- include('../partials/header', { title, active, currentUser }) %>
+
+<section class="manage-page">
+  <div class="section-heading wide">
+    <div>
+      <p class="eyebrow">Favorites</p>
+      <h1>我的收藏</h1>
+    </div>
+    <span class="result-count"><%= favorites.length %> 件收藏</span>
+  </div>
+
+  <section class="seller-dashboard-panel">
+    <div class="heading-actions">
+      <strong>降价提醒总开关</strong>
+      <form action="/favorites/settings/reminder-toggle" method="POST">
+        <button class="button <%= globalReminderEnabled ? 'primary' : 'ghost' %>" type="submit">
+          <%= globalReminderEnabled ? '已开启（点击关闭）' : '已关闭（点击开启）' %>
+        </button>
+      </form>
+    </div>
+  </section>
+
+  <% if (favorites.length === 0) { %>
+    <div class="empty-state">
+      <p>你还没有收藏商品。</p>
+      <a class="button primary" href="/">去逛逛</a>
+    </div>
+  <% } else { %>
+    <div class="manage-list">
+      <% favorites.forEach(function (fav) { %>
+        <% if (!fav.product) { return; } %>
+        <!-- Codex, GPT-5.5 High, OpenAI. -->
+        <article class="manage-item favorite-item">
+          <a class="manage-media" href="/products/<%= fav.product._id %>">
+            <img src="<%= fav.product.imageUrl || '/images/product-default.svg' %>" alt="<%= fav.product.name %>">
+          </a>
+          <!-- end: Codex, GPT-5.5 High, OpenAI. -->
+          <div class="manage-content">
+            <div>
+              <h3><a href="/products/<%= fav.product._id %>"><%= fav.product.name %></a></h3>
+              <p>当前价 ¥<%= Number(fav.product.price || 0).toFixed(2) %> / 收藏时 ¥<%= Number(fav.watchedPrice || 0).toFixed(2) %></p>
+            </div>
+            <div class="product-meta">
+              <span><%= fav.product.category %></span>
+              <span>库存 <%= fav.product.stock %></span>
+              <span><%= fav.alertEnabled ? '提醒已开' : '提醒已关' %></span>
+            </div>
+          </div>
+          <strong class="manage-price">¥<%= Number(fav.product.price || 0).toFixed(2) %></strong>
+          <!-- Codex, GPT-5.5 High, OpenAI. -->
+          <div class="manage-actions favorite-actions">
+            <!-- end: Codex, GPT-5.5 High, OpenAI. -->
+            <form action="/favorites/alert-toggle/<%= fav._id %>" method="POST">
+              <button class="button secondary" type="submit"><%= fav.alertEnabled ? '关闭提醒' : '开启提醒' %></button>
+            </form>
+            <a class="button ghost" href="/products/<%= fav.product._id %>">查看商品</a>
+            <form action="/favorites/remove/<%= fav._id %>" method="POST">
+              <button class="button danger" type="submit">取消收藏</button>
+            </form>
+          </div>
+        </article>
+      <% }); %>
+    </div>
+  <% } %>
+
+  <section class="order-review-section price-reminder-section">
+    <div class="reminder-section-head">
+      <div>
+        <p class="eyebrow">Price Alerts</p>
+        <h2>降价提醒</h2>
+      </div>
+      <span class="result-count"><%= reminders.length %> 条消息</span>
+    </div>
+    <% if (reminders.length === 0) { %>
+      <div class="reminder-empty">
+        <div class="reminder-empty-icon">¥</div>
+        <div>
+          <strong>暂时没有降价提醒</strong>
+          <p>收藏商品降价后，消息会显示在这里。</p>
+        </div>
+        <a class="button ghost" href="/">继续逛逛</a>
+      </div>
+    <% } else { %>
+      <div class="review-history">
+        <% reminders.forEach(function (item) { %>
+          <article class="review-history-item">
+            <strong><%= item.title %></strong>
+            <p><%= item.content %></p>
+            <div class="heading-actions">
+              <% if (item.link) { %><a class="text-link" href="<%= item.link %>">查看商品</a><% } %>
+              <time><%= new Date(item.createdAt).toLocaleString('zh-CN') %></time>
+            </div>
+          </article>
+        <% }); %>
+      </div>
+    <% } %>
+  </section>
+</section>
+
+<%- include('../partials/footer') %>

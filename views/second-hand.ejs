@@ -5,24 +5,7 @@
     <aside class="filter-panel">
       <p class="eyebrow">Second-hand</p>
       <h1>二手交易</h1>
-      <form class="filter-form" action="/second-hand" method="GET">
-        <label>
-          搜索二手商品
-          <input type="search" name="keyword" value="<%= query.keyword || '' %>" placeholder="搜索商品或发布者">
-        </label>
-        <label>
-          分类
-          <select name="category">
-            <option value="">全部分类</option>
-            <% categories.forEach(category=> { %>
-              <option value="<%= category %>" <%=query.category===category ? 'selected' : '' %>><%= category %>
-              </option>
-              <% }) %>
-          </select>
-        </label>
-        <button class="button primary" type="submit">筛选商品</button>
-        <a class="button ghost" href="/second-hand">重置</a>
-      </form>
+      <%- include('partials/product-filters', { query, categories, formAction: '/second-hand', mode: 'second' }) %>
     </aside>
 
     <section class="product-section">

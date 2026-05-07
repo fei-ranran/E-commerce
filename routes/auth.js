@@ -12,4 +12,4 @@ router.post('/register', wrap(authController.register));
 router.post('/logout', authController.logout);
 
 module.exports = router;
-//end: Codex, GPT-5.5 High, OpenAI.
+// end: Codex, GPT-5.5 High, OpenAI.

@@ -10,7 +10,11 @@ const authRoutes = require('./routes/auth');
 const productRoutes = require('./routes/products');
 const cartRoutes = require('./routes/cart');
 const orderRoutes = require('./routes/orders');
+const favoriteRoutes = require('./routes/favorites');
+const adminRoutes = require('./routes/admin');
 const seedProducts = require('./utils/seed');
+const migrateOrderDocuments = require('./utils/migrateOrderCompat');
+const seedSellerReputation = require('./utils/seedSellerReputation');
 
 const app = express();
 const PORT = process.env.PORT || 12399;
@@ -22,6 +26,8 @@ mongoose
   .then(async () => {
     console.log('MongoDB connected:', MONGO_URL);
     await seedProducts();
+    await migrateOrderDocuments();
+    await seedSellerReputation();
   })
   .catch((error) => {
     console.log('MongoDB connection failed:', error.message);
@@ -40,6 +46,8 @@ app.use('/', authRoutes);
 app.use('/products', productRoutes);
 app.use('/cart', cartRoutes);
 app.use('/orders', orderRoutes);
+app.use('/favorites', favoriteRoutes);
+app.use('/admin', adminRoutes);
 
 app.use((error, req, res, next) => {
   console.log('Request failed:', error.message);

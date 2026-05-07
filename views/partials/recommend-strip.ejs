@@ -1,0 +1,17 @@
+<% if (typeof recommendations !== 'undefined' && recommendations && recommendations.length) { %>
+  <section class="recommend-section" aria-labelledby="recommend-heading">
+    <div class="section-heading wide">
+      <div>
+        <p class="eyebrow">For you</p>
+        <h2 id="recommend-heading">猜你喜欢</h2>
+      </div>
+    </div>
+    <div class="recommend-strip" role="list">
+      <% recommendations.forEach(function (product) { %>
+        <div class="recommend-strip-item" role="listitem">
+          <%- include('./product-card', { product }) %>
+        </div>
+      <% }); %>
+    </div>
+  </section>
+<% } %>

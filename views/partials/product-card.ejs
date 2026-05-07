@@ -20,6 +20,18 @@
       <span>
         <%= product.category %>
       </span>
+      <% var wearLabels = { like_new: '几乎全新', good: '良好', fair: '一般', visible_wear: '明显痕迹' }; %>
+      <% if (product.condition === 'used' && product.wearGrade) { %>
+        <span class="wear-chip"><%= wearLabels[product.wearGrade] || product.wearGrade %></span>
+      <% } %>
+      <% if (product.freeShipping) { %>
+        <span class="shipping-badge">包邮</span>
+      <% } %>
+      <% var optimizeTags = ['包邮', '九成新', '成色良好', '正常磨损', '明显使用痕迹', '新品', '低价好物', '高价值']; %>
+      <% (product.tags || []).filter(function (tag) { return optimizeTags.indexOf(tag) >= 0; }).slice(0, 2).forEach(function (tag) { %>
+        <span class="opt-tag"><%= tag %></span>
+      <% }); %>
+      <span>已售 <%= product.salesCount != null ? product.salesCount : 0 %></span>
       <span>库存 <%= product.stock %></span>
       <span class="seller-chip"><i></i>
         <%= product.sellerName %>
@@ -36,4 +48,4 @@
           <!-- end: Antigraity, Gemini 3.1 Pro (high), Google. -->
   </div>
 </article>
-<!-- end:Codex, GPT-5.5 High, OpenAI. -->
+<!-- end: Codex, GPT-5.5 High, OpenAI. -->

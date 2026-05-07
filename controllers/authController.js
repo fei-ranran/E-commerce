@@ -1,5 +1,10 @@
 // Codex, GPT-5.5 High, OpenAI.
 const User = require('../models/User');
+// Codex, GPT-5.5 High, OpenAI.
+const Product = require('../models/Product');
+const Favorite = require('../models/Favorite');
+const Notification = require('../models/Notification');
+// end: Codex, GPT-5.5 High, OpenAI.
 
 function renderLogin(res, message) {
   res.render('auth/login', {
@@ -68,7 +73,12 @@ exports.register = async (req, res) => {
 exports.login = async (req, res) => {
   const { username, password } = req.body;
 
-  const user = await User.findOne({ username });
+  // Codex, GPT-5.5 High, OpenAI.
+  const user = await User.findOne({
+    username,
+    $or: [{ deletedAt: { $exists: false } }, { deletedAt: null }]
+  });
+  // end: Codex, GPT-5.5 High, OpenAI.
   if (!user || !user.verifyPassword(password)) {
     return renderLogin(res, '用户名或密码错误。');
   }
@@ -86,11 +96,42 @@ exports.logout = (req, res) => {
 };
 // 注销账户（我帮你加的）
 exports.deleteAccount = async (req, res) => {
+  // Codex, GPT-5.5 High, OpenAI.
   if (!req.currentUser) {
     return res.redirect('/login');
   }
-  await User.findByIdAndDelete(req.currentUser._id);
+
+  const userId = req.currentUser._id;
+  const suffix = userId.toString().slice(-8) + '_' + Date.now();
+
+  await Promise.all([
+    User.updateOne(
+      { _id: userId },
+      {
+        $set: {
+          username: '已注销用户_' + suffix,
+          email: 'deleted_' + suffix + '@deleted.local',
+          passwordHash: User.hashPassword('deleted_' + suffix),
+          role: 'customer',
+          deletedAt: new Date()
+        }
+      }
+    ),
+    Product.updateMany(
+      { owner: userId },
+      {
+        $set: {
+          sellerName: '已注销用户',
+          stock: 0
+        }
+      }
+    ),
+    Favorite.deleteMany({ user: userId }),
+    Notification.deleteMany({ user: userId })
+  ]);
+
   res.clearCookie('cream_user');
   res.redirect('/');
+  // end: Codex, GPT-5.5 High, OpenAI.
 };
-//end: Codex, GPT-5.5 High, OpenAI.
+// end: Codex, GPT-5.5 High, OpenAI.

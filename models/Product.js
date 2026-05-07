@@ -17,6 +17,19 @@ const productSchema = new mongoose.Schema({
     required: true,
     min: 0
   },
+  priceHistory: [
+    {
+      price: {
+        type: Number,
+        required: true,
+        min: 0
+      },
+      changedAt: {
+        type: Date,
+        default: Date.now
+      }
+    }
+  ],
   category: {
     type: String,
     required: true,
@@ -44,6 +57,20 @@ const productSchema = new mongoose.Schema({
     default: 1,
     min: 0
   },
+  salesCount: {
+    type: Number,
+    default: 0,
+    min: 0
+  },
+  freeShipping: {
+    type: Boolean,
+    default: false
+  },
+  wearGrade: {
+    type: String,
+    enum: ['like_new', 'good', 'fair', 'visible_wear'],
+    required: false
+  },
   tags: [String],
   createdAt: {
     type: Date,
@@ -51,5 +78,31 @@ const productSchema = new mongoose.Schema({
   }
 });
 
+productSchema.pre('save', function trackPriceHistory(next) {
+  if (!Array.isArray(this.priceHistory)) this.priceHistory = [];
+
+  const now = new Date();
+  const latest = this.priceHistory[this.priceHistory.length - 1];
+  const sameAsLatest = latest && Number(latest.price) === Number(this.price);
+
+  if (this.isNew) {
+    if (this.price != null && this.priceHistory.length === 0) {
+      this.priceHistory.push({
+        price: Number(this.price),
+        changedAt: this.createdAt || now
+      });
+    }
+    return next();
+  }
+
+  if (this.isModified('price') && this.price != null && !sameAsLatest) {
+    this.priceHistory.push({
+      price: Number(this.price),
+      changedAt: now
+    });
+  }
+  next();
+});
+
 module.exports = mongoose.model('Product', productSchema);
-//end: Codex, GPT-5.5 High, OpenAI.
+// end: Codex, GPT-5.5 High, OpenAI.

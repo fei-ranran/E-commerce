@@ -10,6 +10,17 @@
     <a class="button primary" href="/products/new">发布商品</a>
   </div>
 
+  <% if (typeof sellerDashboard !== 'undefined' && sellerDashboard) { %>
+    <section class="seller-dashboard-panel">
+      <div class="seller-dashboard-grid">
+        <div><span>在售商品</span><strong><%= sellerDashboard.productsCount || 0 %></strong></div>
+        <div><span>平均评分</span><strong><%= Number(sellerDashboard.averageRating || 0).toFixed(2) %></strong></div>
+        <div><span>好评率</span><strong><%= Number(sellerDashboard.goodRate || 0).toFixed(2) %>%</strong></div>
+        <div><span>交易成功率</span><strong><%= Number(sellerDashboard.successRate || 0).toFixed(2) %>%</strong></div>
+      </div>
+    </section>
+  <% } %>
+
   <% if (products.length === 0) { %>
     <div class="empty-state">
       <p>你还没有发布商品。</p>
@@ -29,7 +40,13 @@
             </div>
             <div class="product-meta">
               <span><%= product.condition === 'used' ? '二手' : '新品' %></span>
+              <% var wearLabels = { like_new: '几乎全新', good: '良好', fair: '一般', visible_wear: '明显痕迹' }; %>
+              <% if (product.condition === 'used' && product.wearGrade) { %>
+                <span class="wear-chip"><%= wearLabels[product.wearGrade] || product.wearGrade %></span>
+              <% } %>
+              <% if (product.freeShipping) { %><span class="shipping-badge">包邮</span><% } %>
               <span><%= product.category %></span>
+              <span>已售 <%= product.salesCount != null ? product.salesCount : 0 %></span>
               <span>库存 <%= product.stock %></span>
             </div>
           </div>

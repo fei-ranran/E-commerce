@@ -33,10 +33,14 @@ async function attachCurrentUser(req, res, next) {
 
   try {
     const user = await User.findById(req.cookies.cream_user);
-    if (user) {
+    // Codex, GPT-5.5 High, OpenAI.
+    if (user && !user.deletedAt) {
       req.currentUser = user;
       res.locals.currentUser = user;
+    } else if (user && user.deletedAt) {
+      res.clearCookie('cream_user');
     }
+    // end: Codex, GPT-5.5 High, OpenAI.
   } catch (error) {
     res.clearCookie('cream_user');
   }
@@ -45,4 +49,4 @@ async function attachCurrentUser(req, res, next) {
 }
 
 module.exports = attachCurrentUser;
-//end: Codex, GPT-5.5 High, OpenAI.
+// end: Codex, GPT-5.5 High, OpenAI.

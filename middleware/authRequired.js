@@ -8,4 +8,4 @@ function authRequired(req, res, next) {
 }
 
 module.exports = authRequired;
-//end: Codex, GPT-5.5 High, OpenAI.
+// end: Codex, GPT-5.5 High, OpenAI.

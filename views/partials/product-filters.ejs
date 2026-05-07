@@ -1,0 +1,95 @@
+<% var q = query || {}; var fq = typeof q === 'object' ? q : {}; %>
+<form id="<%= mode === 'second' ? 'second-search' : 'home-search' %>" class="filter-form filter-form-advanced" action="<%= formAction %>" method="GET">
+  <fieldset class="filter-fieldset">
+    <legend class="filter-legend">关键词与分类</legend>
+    <label>
+      搜索
+      <input type="search" name="keyword" value="<%= fq.keyword || '' %>" placeholder="商品、分类或卖家" autocomplete="off">
+    </label>
+    <label>
+      分类
+      <select name="category">
+        <option value="">全部分类</option>
+        <% categories.forEach(function (category) { %>
+          <option value="<%= category %>" <%= fq.category === category ? 'selected' : '' %>><%= category %></option>
+        <% }); %>
+      </select>
+    </label>
+  </fieldset>
+
+  <fieldset class="filter-fieldset">
+    <legend class="filter-legend">价格与包邮</legend>
+    <div class="price-range-row">
+      <label>
+        最低价
+        <input type="number" name="minPrice" min="0" step="0.01" placeholder="0" value="<%= fq.minPrice !== undefined && fq.minPrice !== '' ? fq.minPrice : '' %>">
+      </label>
+      <label>
+        最高价
+        <input type="number" name="maxPrice" min="0" step="0.01" placeholder="不限" value="<%= fq.maxPrice !== undefined && fq.maxPrice !== '' ? fq.maxPrice : '' %>">
+      </label>
+    </div>
+    <label class="checkbox-row">
+      <input type="checkbox" name="freeShipping" value="1" <%= fq.freeShipping === '1' || fq.freeShipping === 'true' ? 'checked' : '' %>>
+      <span>仅看包邮</span>
+    </label>
+  </fieldset>
+
+  <fieldset class="filter-fieldset">
+    <legend class="filter-legend">商品成色</legend>
+    <label>
+      <%= mode === 'second' ? '二手成色' : '类型与成色' %>
+      <select name="quality">
+        <% if (mode === 'second') { %>
+          <option value="all" <%= !fq.quality || fq.quality === 'all' || fq.quality === 'used' ? 'selected' : '' %>>全部二手</option>
+          <option value="used_like_new" <%= fq.quality === 'used_like_new' ? 'selected' : '' %>>几乎全新</option>
+          <option value="used_good" <%= fq.quality === 'used_good' ? 'selected' : '' %>>良好</option>
+          <option value="used_fair" <%= fq.quality === 'used_fair' ? 'selected' : '' %>>一般</option>
+          <option value="used_visible_wear" <%= fq.quality === 'used_visible_wear' ? 'selected' : '' %>>明显使用痕迹</option>
+        <% } else { %>
+          <option value="all" <%= !fq.quality || fq.quality === 'all' ? 'selected' : '' %>>全部</option>
+          <option value="new" <%= fq.quality === 'new' ? 'selected' : '' %>>全新</option>
+          <option value="used" <%= fq.quality === 'used' ? 'selected' : '' %>>二手（不限成色）</option>
+          <option value="used_like_new" <%= fq.quality === 'used_like_new' ? 'selected' : '' %>>二手 · 几乎全新</option>
+          <option value="used_good" <%= fq.quality === 'used_good' ? 'selected' : '' %>>二手 · 良好</option>
+          <option value="used_fair" <%= fq.quality === 'used_fair' ? 'selected' : '' %>>二手 · 一般</option>
+          <option value="used_visible_wear" <%= fq.quality === 'used_visible_wear' ? 'selected' : '' %>>二手 · 明显痕迹</option>
+        <% } %>
+      </select>
+    </label>
+  </fieldset>
+
+  <fieldset class="filter-fieldset">
+    <legend class="filter-legend">发布时间</legend>
+    <label>
+      上架时间
+      <select name="postedWithin">
+        <option value="" <%= !fq.postedWithin ? 'selected' : '' %>>不限</option>
+        <option value="1" <%= fq.postedWithin === '1' ? 'selected' : '' %>>24 小时内</option>
+        <option value="7" <%= fq.postedWithin === '7' ? 'selected' : '' %>>7 天内</option>
+        <option value="30" <%= fq.postedWithin === '30' ? 'selected' : '' %>>30 天内</option>
+        <option value="90" <%= fq.postedWithin === '90' ? 'selected' : '' %>>90 天内</option>
+      </select>
+    </label>
+  </fieldset>
+
+  <fieldset class="filter-fieldset">
+    <legend class="filter-legend">排序</legend>
+    <label>
+      结果排序
+      <select name="sort">
+        <option value="newest" <%= !fq.sort || fq.sort === 'newest' ? 'selected' : '' %>>最新发布优先</option>
+        <option value="price_asc" <%= fq.sort === 'price_asc' ? 'selected' : '' %>>价格从低到高</option>
+        <option value="price_desc" <%= fq.sort === 'price_desc' ? 'selected' : '' %>>价格从高到低</option>
+        <option value="sales_desc" <%= fq.sort === 'sales_desc' ? 'selected' : '' %>>销量从高到低</option>
+        <option value="sales_asc" <%= fq.sort === 'sales_asc' ? 'selected' : '' %>>销量从低到高</option>
+        <option value="oldest" <%= fq.sort === 'oldest' ? 'selected' : '' %>>发布时间从早到晚</option>
+      </select>
+    </label>
+  </fieldset>
+
+  <div class="filter-form-actions">
+    <button class="button primary" type="submit">应用筛选</button>
+    <a class="button ghost" href="<%= formAction %>">重置</a>
+  </div>
+</form>

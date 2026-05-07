@@ -28,6 +28,11 @@ const orderSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Product'
       },
+      seller: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+      },
+      sellerName: String,
       name: String,
       price: Number,
       quantity: Number,
@@ -42,6 +47,9 @@ const orderSchema = new mongoose.Schema({
     type: String,
     default: '待处理'
   },
+  receivedAt: Date,
+  reviewDeadline: Date,
+  reviewClosedAt: Date,
   createdAt: {
     type: Date,
     default: Date.now
@@ -49,4 +57,4 @@ const orderSchema = new mongoose.Schema({
 });
 
 module.exports = mongoose.model('Order', orderSchema);
-//end: Codex, GPT-5.5 High, OpenAI.
+// end: Codex, GPT-5.5 High, OpenAI.

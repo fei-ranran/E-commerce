@@ -15,4 +15,4 @@ router.put('/:id', authRequired, wrap(productController.update));
 router.delete('/:id', authRequired, wrap(productController.remove));
 
 module.exports = router;
-//end: Codex, GPT-5.5 High, OpenAI. 
+// end: Codex, GPT-5.5 High, OpenAI.

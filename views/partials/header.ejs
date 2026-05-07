@@ -29,17 +29,21 @@
           <!-- Antigravity, Claude Sonnet 4.6 (thinking), Anthropic. 新增：我的订单导航入口 -->
           <a class="<%= active === 'orders' ? 'active' : '' %>" href="/orders/mine">我的订单</a>
           <!-- end: Antigravity, Claude Sonnet 4.6 (thinking), Anthropic. 新增 -->
+          <% if (currentUser.role === 'admin') { %>
+            <a class="<%= active === 'admin' ? 'active' : '' %>" href="/admin/similarity-settings">管理后台</a>
+          <% } %>
+          <a class="<%= active === 'favorites' ? 'active' : '' %>" href="/favorites">我的收藏</a>
           <a class="<%= active === 'mine' ? 'active' : '' %>" href="/products/mine">我的发布</a>
           <form class="inline-form" action="/logout" method="POST">
             <button class="nav-button" type="submit">
               <%= currentUser.username %> 退出
             </button>
           </form>
-          <form class="inline-form" action="/delete-account" method="POST" onsubmit="return confirm('确定要永久注销账户吗？此操作不可恢复！')">
-            <button class="nav-button" type="submit" style="color:red; background:none; border:none;">
-              注销账户
-            </button>
+          <!-- Codex, GPT-5.5 High, OpenAI. -->
+          <form class="inline-form" action="/delete-account" method="POST" onsubmit="return confirm('确定要注销账户吗？你的在售商品将下架，此操作不可恢复。')">
+            <button class="nav-button danger-link" type="submit">注销账户</button>
           </form>
+          <!-- end: Codex, GPT-5.5 High, OpenAI. -->
           <% } else { %>
             <a class="<%= active === 'login' ? 'active' : '' %>" href="/login">登录</a>
             <a class="nav-strong <%= active === 'register' ? 'active' : '' %>" href="/register">注册</a>
@@ -55,4 +59,4 @@
   <% } %>
   <!-- end: Antigraity, Gemini 3.1 Pro (high), Google. -->
   <main class="page-shell">
-    <!-- end:Codex, GPT-5.5 High, OpenAI. -->
+    <!-- end: Codex, GPT-5.5 High, OpenAI. -->

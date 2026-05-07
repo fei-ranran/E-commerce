@@ -1,5 +1,19 @@
 <!-- Codex, GPT-5.5 High, OpenAI. -->
 <%- include('../partials/header', { title, active, currentUser }) %>
+<%
+  var safePriceStats = typeof priceStats !== 'undefined' && priceStats
+    ? priceStats
+    : { current: Number(product.price || 0), low: Number(product.price || 0), high: Number(product.price || 0) };
+  var safePriceSeries = typeof priceHistorySeries !== 'undefined' && Array.isArray(priceHistorySeries)
+    ? priceHistorySeries
+    : [];
+  var safeSellerReputation = typeof sellerReputation !== 'undefined' && sellerReputation
+    ? sellerReputation
+    : { stats: { averageRating: 0, goodRate: 0, successRate: 0, totalReviews: 0 }, recentReviews: [] };
+  var safeFavoriteState = typeof favoriteState !== 'undefined' && favoriteState
+    ? favoriteState
+    : { isFavorited: false, favoriteId: '', alertEnabled: false };
+%>
 
 <section class="detail-layout">
   <div class="detail-media">
@@ -13,17 +27,102 @@
     <h1><%= product.name %></h1>
     <p class="detail-description"><%= product.description %></p>
     <div class="price-line">¥<%= product.price.toFixed(2) %></div>
+    <% var wearLabels = { like_new: '几乎全新', good: '良好', fair: '一般', visible_wear: '明显痕迹' }; %>
     <dl class="info-list">
       <div><dt>卖家</dt><dd><%= product.sellerName %></dd></div>
+      <div><dt>卖家评分</dt><dd><%= Number(safeSellerReputation.stats.averageRating || 0).toFixed(2) %> / 5.00</dd></div>
       <div><dt>库存</dt><dd><%= product.stock %></dd></div>
+      <div><dt>已售</dt><dd><%= product.salesCount != null ? product.salesCount : 0 %> 件</dd></div>
+      <div><dt>物流</dt><dd><%= product.freeShipping ? '卖家包邮' : '邮费另议' %></dd></div>
+      <% if (product.condition === 'used' && product.wearGrade) { %>
+        <div><dt>成色</dt><dd><%= wearLabels[product.wearGrade] || product.wearGrade %></dd></div>
+      <% } %>
       <div><dt>标签</dt><dd><%= product.tags && product.tags.length ? product.tags.join(' / ') : '无' %></dd></div>
     </dl>
+
+    <section class="seller-reputation-panel">
+      <h3>卖家信誉</h3>
+      <div class="seller-reputation-metrics">
+        <span>平均评分：<strong><%= Number(safeSellerReputation.stats.averageRating || 0).toFixed(2) %></strong></span>
+        <span>好评率：<strong><%= Number(safeSellerReputation.stats.goodRate || 0).toFixed(2) %>%</strong></span>
+        <span>交易成功率：<strong><%= Number(safeSellerReputation.stats.successRate || 0).toFixed(2) %>%</strong></span>
+      </div>
+      <div class="seller-recent-reviews">
+        <h4>最近3条评价</h4>
+        <% if (safeSellerReputation.recentReviews && safeSellerReputation.recentReviews.length > 0) { %>
+          <% safeSellerReputation.recentReviews.forEach(function (review) { %>
+            <article class="seller-review-item">
+              <div>
+                <strong><%= review.buyer && review.buyer.username ? review.buyer.username : (review.buyerNameSnapshot || '匿名买家') %></strong>
+                <span><%= review.rating %> 星</span>
+              </div>
+              <p><%= review.content %></p>
+            </article>
+          <% }); %>
+        <% } else { %>
+          <p class="seller-review-empty">暂无评价，欢迎成为首位评价买家。</p>
+        <% } %>
+      </div>
+    </section>
+
+    <section class="price-history-panel" aria-labelledby="price-history-title">
+      <div class="price-stats">
+        <div class="price-stat-box">
+          <dt>当前价</dt>
+          <dd>¥<%= Number(safePriceStats.current || 0).toFixed(2) %></dd>
+        </div>
+        <div class="price-stat-box">
+          <dt>历史最低价</dt>
+          <dd>¥<%= Number(safePriceStats.low || 0).toFixed(2) %></dd>
+        </div>
+        <div class="price-stat-box">
+          <dt>历史最高价</dt>
+          <dd>¥<%= Number(safePriceStats.high || 0).toFixed(2) %></dd>
+        </div>
+      </div>
+      <div class="price-history-head">
+        <h3 id="price-history-title">价格波动走势</h3>
+        <div class="price-history-ranges" role="group" aria-label="价格区间切换">
+          <button type="button" class="price-range-btn active" data-price-range="7d">近7天</button>
+          <button type="button" class="price-range-btn" data-price-range="30d">近30天</button>
+          <button type="button" class="price-range-btn" data-price-range="all">全部时间</button>
+        </div>
+      </div>
+      <div class="price-history-chart-wrap">
+        <canvas data-price-history-chart aria-label="商品价格趋势图" role="img"></canvas>
+      </div>
+      <p class="price-range-status" data-price-range-status></p>
+      <script id="price-history-data" type="application/json"><%- JSON.stringify(safePriceSeries) %></script>
+    </section>
+
     <div class="action-row">
       <!-- Antigraity, Gemini 3.1 Pro (high), Google.：库存为0时显示已售罄 -->
       <% if (product.stock > 0) { %>
         <form action="/cart/add/<%= product._id %>" method="POST">
           <button class="button primary" type="submit">加入购物车</button>
         </form>
+        <% if (currentUser) { %>
+          <button
+            class="button secondary"
+            type="button"
+            data-favorite-toggle
+            data-product-id="<%= product._id %>"
+            data-favorited="<%= safeFavoriteState.isFavorited ? '1' : '0' %>"
+            data-favorite-id="<%= safeFavoriteState.favoriteId || '' %>">
+            <%= safeFavoriteState.isFavorited ? '已收藏' : '收藏/关注' %>
+          </button>
+          <button
+            class="button ghost"
+            type="button"
+            data-favorite-alert-toggle
+            data-favorite-id="<%= safeFavoriteState.favoriteId || '' %>"
+            data-alert-enabled="<%= safeFavoriteState.alertEnabled ? '1' : '0' %>"
+            <%= safeFavoriteState.isFavorited ? '' : 'disabled' %>>
+            降价提醒：<%= safeFavoriteState.alertEnabled ? '已开启' : '已关闭' %>
+          </button>
+        <% } else { %>
+          <a class="button secondary" href="/login">登录后可收藏</a>
+        <% } %>
       <% } else { %>
         <button class="button ghost" disabled>已售罄</button>
       <% } %>
@@ -32,4 +131,7 @@
   </div>
 </section>
 
+<%- include('../partials/recommend-strip', { recommendations }) %>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
 <%- include('../partials/footer') %>

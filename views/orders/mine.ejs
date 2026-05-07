@@ -41,7 +41,18 @@
 
         <div class="order-card-foot">
           <span class="order-total">实付 <strong>¥<%= order.total.toFixed(2) %></strong></span>
-          <a class="button ghost" href="/orders/<%= order._id %>">查看详情</a>
+          <div class="order-inline-actions">
+            <% if (order.status !== '已完成') { %>
+              <form action="/orders/<%= order._id %>/confirm-received" method="POST">
+                <button class="button primary" type="submit">确认收货</button>
+              </form>
+            <% } else if (order.reviewMeta && order.reviewMeta.reviewOpen) { %>
+              <a class="button secondary" href="/orders/<%= order._id %>">去评价</a>
+            <% } else if (order.reviewMeta && order.reviewMeta.reviewExpired) { %>
+              <span class="order-review-closed">评价窗口已关闭</span>
+            <% } %>
+            <a class="button ghost" href="/orders/<%= order._id %>">查看详情</a>
+          </div>
         </div>
       </article>
     <% }) %>
@@ -49,4 +60,4 @@
 </section>
 
 <%- include('../partials/footer') %>
-<!-- end:Codex, GPT-5.5 High, OpenAI. -->
+<!-- end: Codex, GPT-5.5 High, OpenAI. -->

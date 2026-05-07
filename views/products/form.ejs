@@ -7,40 +7,96 @@
     <h1><%= title %></h1>
   </div>
 
-  <form class="app-form" action="<%= action %>" method="<%= method %>">
+  <form class="app-form" action="<%= action %>" method="<%= method %>" data-publish-form>
+    <% if (typeof formError !== 'undefined' && formError) { %>
+      <p class="message"><%= formError %></p>
+    <% } %>
     <div class="seller-strip">
       <span>卖家名称</span>
       <strong><%= currentUser.username %></strong>
     </div>
+    <section class="publish-assist-panel">
+      <h3>智能发布建议</h3>
+      <p class="form-hint" data-smart-suggest>
+        <% if (typeof suggest !== 'undefined' && suggest) { %>
+          推荐分类：<%= suggest.category %>，建议价格区间：¥<%= suggest.minPrice %> - ¥<%= suggest.maxPrice %>。
+        <% } else { %>
+          输入商品名称后，将自动推荐分类和价格区间。
+        <% } %>
+      </p>
+      <ul class="publish-checklist" data-live-checklist>
+        <li data-check="required">请填写必填项（名称、描述、价格、库存、分类）。</li>
+        <li data-check="price">价格建议应在合理区间内，明显低于市场价会提醒。</li>
+        <li data-check="description">描述建议 12~240 字，便于提高转化率。</li>
+      </ul>
+    </section>
+
+    <% if (typeof duplicateCheck !== 'undefined' && duplicateCheck && duplicateCheck.matches && duplicateCheck.matches.length) { %>
+      <section class="duplicate-warning-panel">
+        <h3>平台已有相似商品，避免重复发布</h3>
+        <p class="form-hint">
+          当前检测阈值：<%= Number(duplicateCheck.threshold || 0).toFixed(2) %>。以下商品与当前发布内容高度相似：
+        </p>
+        <ul class="duplicate-list">
+          <% duplicateCheck.matches.forEach(function (match) { %>
+            <li>
+              <a href="/products/<%= match.product._id %>" target="_blank" rel="noreferrer noopener"><%= match.product.name %></a>
+              <span>相似度 <%= (match.score * 100).toFixed(1) %>%</span>
+              <span>¥<%= Number(match.product.price || 0).toFixed(2) %></span>
+            </li>
+          <% }); %>
+        </ul>
+      </section>
+    <% } %>
     <label>
       商品名称
-      <input required type="text" name="name" value="<%= product.name || '' %>">
+      <input required type="text" name="name" value="<%= product.name || '' %>" data-field="name">
     </label>
     <label>
       商品描述
-      <textarea required name="description" rows="5"><%= product.description || '' %></textarea>
+      <textarea required name="description" rows="5" data-field="description"><%= product.description || '' %></textarea>
     </label>
     <div class="form-grid">
       <label>
         价格
-        <input required type="number" name="price" min="0" step="0.01" value="<%= product.price || '' %>">
+        <input required type="number" name="price" min="0" step="0.01" value="<%= product.price || '' %>" data-field="price">
       </label>
       <label>
         库存
-        <input required type="number" name="stock" min="0" value="<%= product.stock || 1 %>">
+        <input required type="number" name="stock" min="0" value="<%= product.stock || 1 %>" data-field="stock">
       </label>
     </div>
     <div class="form-grid">
       <label>
         分类
-        <input required type="text" name="category" value="<%= product.category || '' %>" placeholder="数码设备 / 二手书籍">
+        <input required type="text" name="category" value="<%= product.category || '' %>" placeholder="数码设备 / 二手书籍" list="category-options" data-field="category">
+        <datalist id="category-options">
+          <% (allowedCategories || []).forEach(function (cat) { %>
+            <option value="<%= cat %>"></option>
+          <% }); %>
+        </datalist>
       </label>
       <label>
-        成色
-        <select name="condition">
+        类型
+        <select name="condition" data-condition-select data-field="condition">
           <option value="new" <%= product.condition === 'new' ? 'selected' : '' %>>新品</option>
           <option value="used" <%= product.condition === 'used' ? 'selected' : '' %>>二手</option>
         </select>
+      </label>
+    </div>
+    <div class="form-grid form-wear-row" data-wear-row>
+      <label>
+        二手成色
+        <select name="wearGrade" data-field="wearGrade">
+          <option value="like_new" <%= product.wearGrade === 'like_new' ? 'selected' : '' %>>几乎全新</option>
+          <option value="good" <%= !product.wearGrade || product.wearGrade === 'good' ? 'selected' : '' %>>良好</option>
+          <option value="fair" <%= product.wearGrade === 'fair' ? 'selected' : '' %>>一般</option>
+          <option value="visible_wear" <%= product.wearGrade === 'visible_wear' ? 'selected' : '' %>>明显使用痕迹</option>
+        </select>
+      </label>
+      <label class="checkbox-row">
+        <input type="checkbox" name="freeShipping" value="1" <%= product.freeShipping ? 'checked' : '' %>>
+        <span>包邮</span>
       </label>
     </div>
     <label>
@@ -62,6 +118,10 @@
     <label>
       标签
       <input type="text" name="tags" value="<%= product.tags ? product.tags.join(', ') : '' %>" placeholder="二手, 教材, linux">
+    </label>
+    <label class="checkbox-row">
+      <input type="checkbox" name="forcePublish" value="1">
+      <span>我已确认不是重复商品，仍要发布</span>
     </label>
     <div class="action-row">
       <button class="button primary" type="submit"><%= buttonText %></button>

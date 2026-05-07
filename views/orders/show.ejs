@@ -29,8 +29,74 @@
       <span>实付</span>
       <strong>¥<%= order.total.toFixed(2) %></strong>
     </div>
+
+    <% if (currentUser && order.owner) { %>
+    <section class="order-review-section">
+      <div class="section-heading wide">
+        <div>
+          <p class="eyebrow">Review</p>
+          <h2>交易评价</h2>
+        </div>
+      </div>
+
+      <% if (order.status !== '已完成') { %>
+        <div class="empty-state">
+          <p>请先确认收货，确认后将开放评价入口（7天内有效）。</p>
+          <form action="/orders/<%= order._id %>/confirm-received" method="POST">
+            <button class="button primary" type="submit">确认收货并去评价</button>
+          </form>
+        </div>
+      <% } else if (reviewMeta && reviewMeta.reviewOpen) { %>
+        <% reviewMeta.pendingSellers.forEach(function (seller) { %>
+          <article class="review-entry-card">
+            <h3>评价卖家：<%= seller.sellerName %></h3>
+            <p class="review-order-items">
+              <%= seller.items.map(function(it){ return it.name + ' ×' + it.quantity; }).join(' / ') %>
+            </p>
+            <form class="review-form" action="/orders/<%= order._id %>/reviews" method="POST">
+              <input type="hidden" name="sellerId" value="<%= seller.sellerId %>">
+              <label>
+                星级评分
+                <select name="rating" required>
+                  <option value="5">5 星（非常满意）</option>
+                  <option value="4">4 星（满意）</option>
+                  <option value="3">3 星（一般）</option>
+                  <option value="2">2 星（不满意）</option>
+                  <option value="1">1 星（很差）</option>
+                </select>
+              </label>
+              <label>
+                文字评价
+                <textarea name="content" rows="3" maxlength="300" required placeholder="分享你的真实购买体验（支持敏感词过滤）"></textarea>
+              </label>
+              <button class="button primary" type="submit">提交评价</button>
+            </form>
+          </article>
+        <% }) %>
+      <% } else if (reviewMeta && reviewMeta.reviewExpired) { %>
+        <div class="empty-state">
+          <p>评价窗口已关闭，感谢你的交易。</p>
+        </div>
+      <% } %>
+
+      <% if (reviews && reviews.length > 0) { %>
+        <div class="review-history">
+          <h3>我已提交的评价</h3>
+          <% reviews.forEach(function (review) { %>
+            <article class="review-history-item">
+              <strong><%= review.sellerNameSnapshot || '卖家' %></strong>
+              <span class="review-stars">评分：<%= review.rating %> 星</span>
+              <p><%= review.content %></p>
+              <time><%= new Date(review.createdAt).toLocaleString('zh-CN') %></time>
+            </article>
+          <% }) %>
+        </div>
+      <% } %>
+    </section>
+    <% } %>
+
     <a class="button primary" href="/">继续购物</a>
   </section>
 
   <%- include('../partials/footer') %>
-    <!-- end:Codex, GPT-5.5 High, OpenAI. -->
+    <!-- end: Codex, GPT-5.5 High, OpenAI. -->

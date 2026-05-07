@@ -1,9 +1,20 @@
 // Codex, GPT-5.5 High, OpenAI.
 const Product = require('../models/Product');
+const mongoose = require('mongoose');
 
 function readCart(req) {
   try {
-    return JSON.parse(req.cookies.cream_cart || '[]');
+    // Codex, GPT-5.5 High, OpenAI.
+    const parsed = JSON.parse(req.cookies.cream_cart || '[]');
+    if (!Array.isArray(parsed)) return [];
+
+    return parsed
+      .filter((item) => item && mongoose.Types.ObjectId.isValid(item.productId))
+      .map((item) => ({
+        productId: item.productId.toString(),
+        quantity: Math.max(1, Math.min(99, parseInt(item.quantity, 10) || 1))
+      }));
+    // end: Codex, GPT-5.5 High, OpenAI.
   } catch (error) {
     return [];
   }
@@ -108,4 +119,4 @@ exports.clear = (req, res) => {
   res.clearCookie('cream_cart');
   res.redirect('/cart');
 };
-//end: Codex, GPT-5.5 High, OpenAI.
+// end: Codex, GPT-5.5 High, OpenAI.

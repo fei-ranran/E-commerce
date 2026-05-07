@@ -23,6 +23,17 @@ const userSchema = new mongoose.Schema({
     type: String,
     default: 'customer'
   },
+  settings: {
+    priceDropReminderEnabled: {
+      type: Boolean,
+      default: true
+    }
+  },
+  // Codex, GPT-5.5 High, OpenAI.
+  deletedAt: {
+    type: Date
+  },
+  // end: Codex, GPT-5.5 High, OpenAI.
   createdAt: {
     type: Date,
     default: Date.now
