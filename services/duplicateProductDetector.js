@@ -1,5 +1,9 @@
 const Product = require('../models/Product');
 
+function escapeRegExp(value) {
+  return String(value).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
 function normalizeText(text) {
   return String(text || '')
     .toLowerCase()
@@ -74,7 +78,7 @@ async function findHighSimilarProducts(payload, options = {}) {
     filter._id = { $ne: excludeProductId };
   }
   if (nameTokens.length > 0) {
-    filter.$or = nameTokens.map((token) => ({ name: new RegExp(token, 'i') }));
+    filter.$or = nameTokens.map((token) => ({ name: new RegExp(escapeRegExp(token), 'i') }));
   }
 
   const candidates = await Product.find(filter)

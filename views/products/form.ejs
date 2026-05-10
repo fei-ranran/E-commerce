@@ -3,7 +3,7 @@
 
 <section class="form-page">
   <div class="form-copy">
-    <p class="eyebrow">Product Form</p>
+    <p class="eyebrow" data-i18n="form.productForm"><%= __('form.productForm') %></p>
     <h1><%= title %></h1>
   </div>
 
@@ -12,11 +12,11 @@
       <p class="message"><%= formError %></p>
     <% } %>
     <div class="seller-strip">
-      <span>卖家名称</span>
+      <span data-i18n="form.sellerName"><%= __('form.sellerName') %></span>
       <strong><%= currentUser.username %></strong>
     </div>
     <section class="publish-assist-panel">
-      <h3>智能发布建议</h3>
+      <h3 data-i18n="form.productForm"><%= __('form.productForm') %></h3>
       <p class="form-hint" data-smart-suggest>
         <% if (typeof suggest !== 'undefined' && suggest) { %>
           推荐分类：<%= suggest.category %>，建议价格区间：¥<%= suggest.minPrice %> - ¥<%= suggest.maxPrice %>。
@@ -49,32 +49,26 @@
       </section>
     <% } %>
     <label>
-      商品名称
+      <span data-i18n="form.productName"><%= __('form.productName') %></span>
       <input required type="text" name="name" value="<%= product.name || '' %>" data-field="name">
     </label>
     <label>
-      商品描述
+      <span data-i18n="form.productDesc"><%= __('form.productDesc') %></span>
       <textarea required name="description" rows="5" data-field="description"><%= product.description || '' %></textarea>
     </label>
     <div class="form-grid">
       <label>
-        价格
-        <input required type="number" name="price" min="0" step="0.01" value="<%= product.price || '' %>" data-field="price">
-      </label>
-      <label>
-        库存
-        <input required type="number" name="stock" min="0" value="<%= product.stock || 1 %>" data-field="stock">
-      </label>
-    </div>
-    <div class="form-grid">
-      <label>
         分类
-        <input required type="text" name="category" value="<%= product.category || '' %>" placeholder="数码设备 / 二手书籍" list="category-options" data-field="category">
-        <datalist id="category-options">
+        <input required list="category-list" name="category" value="<%= product.category || '' %>" data-field="category" placeholder="选择或输入分类">
+        <datalist id="category-list">
           <% (allowedCategories || []).forEach(function (cat) { %>
             <option value="<%= cat %>"></option>
           <% }); %>
         </datalist>
+      </label>
+      <label>
+        价格
+        <input required type="number" name="price" value="<%= product.price || '' %>" data-field="price" step="0.01" min="0" placeholder="¥">
       </label>
       <label>
         类型
@@ -82,6 +76,10 @@
           <option value="new" <%= product.condition === 'new' ? 'selected' : '' %>>新品</option>
           <option value="used" <%= product.condition === 'used' ? 'selected' : '' %>>二手</option>
         </select>
+      </label>
+      <label>
+        库存
+        <input required type="number" name="stock" value="<%= product.stock != null ? product.stock : 1 %>" data-field="stock" min="1" step="1">
       </label>
     </div>
     <div class="form-grid form-wear-row" data-wear-row>

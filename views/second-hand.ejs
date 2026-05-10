@@ -3,8 +3,8 @@
 
   <section class="storefront second-layout">
     <aside class="filter-panel">
-      <p class="eyebrow">Second-hand</p>
-      <h1>二手交易</h1>
+      <p class="eyebrow" data-i18n="nav.second"><%= __('nav.second') %></p>
+      <h1 data-i18n="nav.second"><%= __('nav.second') %></h1>
       <%- include('partials/product-filters', { query, categories, formAction: '/second-hand', mode: 'second' }) %>
     </aside>
 

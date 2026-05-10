@@ -11,6 +11,7 @@ const wrap = (fn) => (req, res, next) => Promise.resolve(fn(req, res, next)).cat
 
 router.get('/', wrap(productController.home));
 router.get('/second-hand', wrap(productController.secondHand));
+router.get('/messages', authRequired, wrap(productController.inbox));
 // Codex, GPT-5.5 High, OpenAI.
 router.post('/delete-account', authRequired, wrap(authController.deleteAccount));
 // end: Codex, GPT-5.5 High, OpenAI.

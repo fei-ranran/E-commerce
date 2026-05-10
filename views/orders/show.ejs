@@ -1,13 +1,16 @@
 <!-- Codex, GPT-5.5 High, OpenAI. -->
 <%- include('../partials/header', { title, active, currentUser }) %>
 
+  <% if (typeof order === 'undefined' || !order) { %>
+    <p>订单信息不可用</p>
+  <% } else { %>
   <section class="order-detail">
-    <p class="eyebrow">Order</p>
-    <h1>订单已提交</h1>
+    <p class="eyebrow" data-i18n="orders.title"><%= __('orders.title') %></p>
+    <h1 data-i18n="orders.title"><%= __('orders.title') %></h1>
     <div class="order-meta">
-      <span>订单号：<%= order._id %></span>
-      <span>状态：<%= order.status %></span>
-      <span>时间：<%= order.createdAt.toLocaleString('zh-CN') %></span>
+      <span data-i18n="order.orderIdLabel"><%= __('order.orderIdLabel') %>：<%= order._id %></span>
+      <span><%= __('nav.orders') %>：<%= order.status %></span>
+      <span><%= order.createdAt.toLocaleString('zh-CN') %></span>
     </div>
     <div class="cart-list compact">
       <% order.items.forEach(item=> { %>
@@ -26,7 +29,7 @@
         <% }) %>
     </div>
     <div class="summary-total">
-      <span>实付</span>
+      <span data-i18n="order.paidLabel"><%= __('order.paidLabel') %></span>
       <strong>¥<%= order.total.toFixed(2) %></strong>
     </div>
 
@@ -97,6 +100,7 @@
 
     <a class="button primary" href="/">继续购物</a>
   </section>
+  <% } %>
 
   <%- include('../partials/footer') %>
     <!-- end: Codex, GPT-5.5 High, OpenAI. -->

@@ -1,0 +1,70 @@
+<!-- GPT. -->
+<%- include('../partials/header', { title, active, currentUser }) %>
+
+<section class="messages-page">
+  <div class="section-heading wide">
+    <div>
+      <p class="eyebrow" data-i18n="nav.messages"><%= __('nav.messages') %></p>
+      <h1><%= product.name %> - <span data-i18n="nav.messages"><%= __('nav.messages') %></span></h1>
+    </div>
+    <a class="button ghost" href="/products/<%= product._id %>" data-i18n="empty.backHome"><%= __('empty.backHome') %></a>
+  </div>
+
+  <div class="messages-panel">
+    <div class="messages-list">
+      <% if (messages && messages.length) { %>
+        <% messages.forEach(function(m) { %>
+          <article class="message-item <%= m.to && m.to._id && currentUser && m.to._id.toString() === currentUser._id.toString() ? 'incoming' : 'outgoing' %>">
+            <header>
+              <strong><%= m.from && m.from.username ? m.from.username : '匿名' %></strong>
+              <time><%= new Date(m.createdAt).toLocaleString() %></time>
+            </header>
+            <% if (m.content) { %><p><%= m.content %></p><% } %>
+            <% if (m.media && m.media.length) { %>
+              <div class="message-media-grid">
+                <% m.media.forEach(function(mm){ %>
+                  <% if (mm.type === 'image') { %>
+                    <img src="<%= mm.url %>" alt="media">
+                  <% } else { %>
+                    <video controls src="<%= mm.url %>"></video>
+                  <% } %>
+                <% }) %>
+              </div>
+            <% } %>
+          </article>
+        <% }) %>
+      <% } else { %>
+        <p class="empty-state">暂无咨询消息。</p>
+      <% } %>
+    </div>
+
+    <div class="message-compose">
+      <form id="message-form" action="/products/<%= product._id %>/messages" method="POST">
+        <label>
+          发送给：
+          <select name="to">
+            <% if (product.owner) { %>
+              <option value="<%= product.owner %>">发布者</option>
+            <% } %>
+          </select>
+        </label>
+        <label>
+          内容
+          <textarea name="content" rows="3"></textarea>
+        </label>
+        <label>
+          上传图片/视频
+          <input id="message-file-input" type="file" accept="image/*,video/*" multiple>
+        </label>
+        <div id="message-media-list" class="media-list"></div>
+        <input type="hidden" name="media" data-media-input>
+        <div class="action-row">
+          <button class="button primary" type="submit" data-i18n="messages.send"><%= __('messages.send') %></button>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<script src="/js/messages.js"></script>
+<%- include('../partials/footer') %>

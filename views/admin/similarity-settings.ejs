@@ -4,12 +4,12 @@
   <div class="section-heading wide">
     <div>
       <p class="eyebrow">Admin</p>
-      <h1>重复发布检测阈值</h1>
+      <h1 data-i18n="admin.similarity.title"><%= __('admin.similarity.title') %></h1>
     </div>
   </div>
 
   <form class="app-form" action="/admin/similarity-settings" method="POST">
-    <% if (message) { %>
+    <% if (typeof message !== 'undefined' && message) { %>
       <p class="message"><%= message %></p>
     <% } %>
     <label>
@@ -25,8 +25,8 @@
     </label>
     <p class="form-hint">值越高，判定“重复”的条件越严格。推荐 0.75~0.85。</p>
     <div class="action-row">
-      <button class="button primary" type="submit">保存设置</button>
-      <a class="button ghost" href="/">返回首页</a>
+      <button class="button primary" type="submit" data-i18n="admin.similarity.save"><%= __('admin.similarity.save') %></button>
+      <a class="button ghost" href="/" data-i18n="admin.similarity.back"><%= __('admin.similarity.back') %></a>
     </div>
   </form>
 </section>

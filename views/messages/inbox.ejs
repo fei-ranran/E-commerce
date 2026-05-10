@@ -1,0 +1,44 @@
+<%- include('../partials/header', { title, active, currentUser }) %>
+
+<section class="inbox-page">
+    <div class="section-heading wide">
+      <div>
+        <p class="eyebrow" data-i18n="nav.messages"><%= __('nav.messages') %></p>
+        <h1 data-i18n="nav.messages"><%= __('nav.messages') %></h1>
+      </div>
+    </div>
+
+  <div class="inbox-list">
+    <% if (conversations && conversations.length) { %>
+      <% conversations.forEach(function(conv) { %>
+        <% if (!conv.product) { return; } %>
+        <article class="inbox-item">
+          <a class="inbox-link" href="/products/<%= conv.product._id %>/messages">
+            <div class="inbox-thumb">
+              <img src="<%= conv.product.imageUrl || '/images/product-default.svg' %>" alt="">
+            </div>
+            <div class="inbox-body">
+              <h3><%= conv.product.name %></h3>
+              <% if (conv.lastMessage) { %>
+                <p class="inbox-snippet"><%= conv.lastMessage.content ? conv.lastMessage.content.slice(0,120) : (conv.lastMessage.media && conv.lastMessage.media.length ? '[媒体]' : '') %></p>
+                <div class="inbox-meta">
+                  <span class="inbox-time"><%= new Date(conv.lastMessage.createdAt).toLocaleString() %></span>
+                  <span class="inbox-from"><%= conv.lastMessage.from && conv.lastMessage.from.username ? conv.lastMessage.from.username : '' %></span>
+                </div>
+              <% } %>
+            </div>
+            <div class="inbox-badge">
+              <% if (conv.unreadCount && conv.unreadCount > 0) { %>
+                <span class="badge"><%= conv.unreadCount %></span>
+              <% } %>
+            </div>
+          </a>
+        </article>
+      <% }) %>
+    <% } else { %>
+      <p class="empty-state" data-i18n="messages.empty"><%= __('messages.empty') %></p>
+    <% } %>
+  </div>
+</section>
+
+<%- include('../partials/footer') %>

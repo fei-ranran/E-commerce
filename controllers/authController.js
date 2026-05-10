@@ -31,11 +31,16 @@ exports.registerForm = (req, res) => {
 };
 
 exports.register = async (req, res) => {
-  const { username, email, password } = req.body;
+  const { username, email, password, captcha } = req.body;
 
   if (!username || !email || !password) {
     return renderRegister(res, '请填写完整的注册信息。');
   }
+
+  if (!req.session || !req.session.captcha || String(captcha || '').toUpperCase() !== String(req.session.captcha || '').toUpperCase()) {
+    return renderRegister(res, '验证码错误，请重试。');
+  }
+  try { if (req.session) req.session.captcha = null } catch(e) {}
   
   const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,20}$/;
   if (!passwordRegex.test(password)) {
@@ -71,16 +76,22 @@ exports.register = async (req, res) => {
 };
 
 exports.login = async (req, res) => {
-  const { username, password } = req.body;
+  const { username, password, captcha } = req.body;
 
-  // Codex, GPT-5.5 High, OpenAI.
+  if (!req.session || !req.session.captcha || String(captcha || '').toUpperCase() !== String(req.session.captcha || '').toUpperCase()) {
+    return renderLogin(res, '验证码错误，请重试。');
+  }
+
   const user = await User.findOne({
-    username,
-    $or: [{ deletedAt: { $exists: false } }, { deletedAt: null }]
+    $or: [{ username }, { email: username }],
+    deletedAt: null
   });
-  // end: Codex, GPT-5.5 High, OpenAI.
+
+  // consume captcha so it cannot be reused
+  try { if (req.session) req.session.captcha = null } catch(e) {}
+
   if (!user || !user.verifyPassword(password)) {
-    return renderLogin(res, '用户名或密码错误。');
+    return renderLogin(res, '用户名、邮箱或密码错误。');
   }
 
   res.cookie('cream_user', user._id.toString(), {

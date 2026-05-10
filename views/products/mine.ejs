@@ -7,7 +7,12 @@
       <p class="eyebrow">Manage</p>
       <h1>我的发布</h1>
     </div>
-    <a class="button primary" href="/products/new">发布商品</a>
+    <div>
+      <a class="button primary" href="/products/new">发布商品</a>
+      <% if (currentUser && (currentUser.role === 'admin' || currentUser.role === 'superadmin')) { %>
+        <a class="button" href="/admin/users">用户管理</a>
+      <% } %>
+    </div>
   </div>
 
   <% if (typeof sellerDashboard !== 'undefined' && sellerDashboard) { %>
@@ -53,6 +58,7 @@
           <strong class="manage-price">¥<%= product.price.toFixed(2) %></strong>
           <div class="manage-actions">
             <a class="button secondary" href="/products/<%= product._id %>/edit">编辑</a>
+            <a class="button ghost" href="/products/<%= product._id %>/messages">消息 (<%= messageCounts && messageCounts[product._id] ? messageCounts[product._id] : 0 %>)</a>
             <form action="/products/<%= product._id %>?_method=DELETE" method="POST">
               <button class="button danger" type="submit">删除</button>
             </form>

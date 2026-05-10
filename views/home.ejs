@@ -3,7 +3,7 @@
 
   <section class="storefront">
     <aside class="filter-panel">
-      <p class="eyebrow">Marketplace</p>
+      <p class="eyebrow" data-i18n="nav.home"><%= __('nav.home') %></p>
       <h1>Cream Market</h1>
       <%- include('partials/product-filters', { query, categories, formAction: '/', mode: 'home' }) %>
     </aside>
@@ -11,7 +11,7 @@
     <section class="product-section">
       <div class="section-heading">
         <div>
-          <p class="eyebrow">Products</p>
+          <p class="eyebrow" data-i18n="nav.home"><%= __('nav.home') %></p>
           <h2>全部商品</h2>
         </div>
         <div class="heading-actions">

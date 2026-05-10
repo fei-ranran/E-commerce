@@ -41,11 +41,19 @@ const userSchema = new mongoose.Schema({
 });
 
 userSchema.statics.hashPassword = function hashPassword(password) {
-  return crypto.createHash('sha256').update(password).digest('hex');
+  const salt = crypto.randomBytes(16).toString('hex');
+  const hash = crypto.createHash('sha256').update(salt + password).digest('hex');
+  return salt + ':' + hash;
 };
 
 userSchema.methods.verifyPassword = function verifyPassword(password) {
-  return this.passwordHash === this.constructor.hashPassword(password);
+  const parts = (this.passwordHash || '').split(':');
+  if (parts.length === 2) {
+    const [salt, hash] = parts;
+    return hash === crypto.createHash('sha256').update(salt + password).digest('hex');
+  }
+  // backward compatible: unsalted legacy hash
+  return this.passwordHash === crypto.createHash('sha256').update(password).digest('hex');
 };
 
 module.exports = mongoose.model('User', userSchema);

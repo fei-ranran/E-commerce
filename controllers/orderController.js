@@ -169,11 +169,24 @@ exports.create = async (req, res) => {
     deductedItems.push(item);
   }
 
+  const customerName = String(req.body.customerName || '').trim();
+  const phone = String(req.body.phone || '').trim();
+  const address = String(req.body.address || '').trim();
+
+  if (!customerName || !phone || !address) {
+    return res.render('orders/checkout', {
+      title: '结算',
+      active: 'cart',
+      cart,
+      message: '请填写完整的收货人、联系电话和收货地址。'
+    });
+  }
+
   const order = new Order({
     owner: req.currentUser._id,
-    customerName: req.body.customerName,
-    phone: req.body.phone,
-    address: req.body.address,
+    customerName,
+    phone,
+    address,
     items: orderItems,
     total: cart.total,
     status: '待收货'
@@ -265,7 +278,9 @@ exports.confirmReceived = async (req, res) => {
   if (!order.owner || order.owner.toString() !== req.currentUser._id.toString()) {
     return res.redirect('/orders/mine');
   }
-  if (order.status === '已完成') return res.redirect('/orders/' + order._id);
+  if (order.status !== '待收货') {
+    return res.render('error', { title: '操作失败', active: '', message: '订单状态不允许确认收货' });
+  }
 
   const now = new Date();
   order.status = '已完成';

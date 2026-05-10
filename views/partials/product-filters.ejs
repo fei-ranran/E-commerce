@@ -1,15 +1,15 @@
 <% var q = query || {}; var fq = typeof q === 'object' ? q : {}; %>
 <form id="<%= mode === 'second' ? 'second-search' : 'home-search' %>" class="filter-form filter-form-advanced" action="<%= formAction %>" method="GET">
   <fieldset class="filter-fieldset">
-    <legend class="filter-legend">关键词与分类</legend>
+    <legend class="filter-legend" data-i18n="filter.keywordLegend"><%= __('filter.keywordLegend') %></legend>
     <label>
-      搜索
-      <input type="search" name="keyword" value="<%= fq.keyword || '' %>" placeholder="商品、分类或卖家" autocomplete="off">
+      <span data-i18n="filter.search"><%= __('filter.search') %></span>
+      <input type="search" name="keyword" value="<%= fq.keyword || '' %>" placeholder="<%= __('filter.search') %>" autocomplete="off">
     </label>
     <label>
-      分类
+      <span data-i18n="filter.category"><%= __('filter.category') %></span>
       <select name="category">
-        <option value="">全部分类</option>
+        <option value=""><%= __('filter.category') %></option>
         <% categories.forEach(function (category) { %>
           <option value="<%= category %>" <%= fq.category === category ? 'selected' : '' %>><%= category %></option>
         <% }); %>
@@ -89,7 +89,7 @@
   </fieldset>
 
   <div class="filter-form-actions">
-    <button class="button primary" type="submit">应用筛选</button>
-    <a class="button ghost" href="<%= formAction %>">重置</a>
+    <button class="button primary" type="submit" data-i18n="filter.apply"><%= __('filter.apply') %></button>
+    <a class="button ghost" href="<%= formAction %>" data-i18n="filter.reset"><%= __('filter.reset') %></a>
   </div>
 </form>

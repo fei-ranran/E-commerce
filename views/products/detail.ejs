@@ -18,8 +18,8 @@
 <section class="detail-layout">
   <div class="detail-media">
     <img src="<%= product.imageUrl %>" alt="<%= product.name %>">
-    <span class="condition-badge <%= product.condition === 'used' ? 'used' : 'new' %>">
-      <%= product.condition === 'used' ? '二手' : '新品' %>
+    <span class="condition-badge <%= product.condition === 'used' ? 'used' : 'new' %>" data-i18n="product.condition.<%= product.condition === 'used' ? 'used' : 'new' %>">
+      <%= __( 'product.condition.' + (product.condition === 'used' ? 'used' : 'new') ) %>
     </span>
   </div>
   <div class="detail-panel">
@@ -29,26 +29,26 @@
     <div class="price-line">¥<%= product.price.toFixed(2) %></div>
     <% var wearLabels = { like_new: '几乎全新', good: '良好', fair: '一般', visible_wear: '明显痕迹' }; %>
     <dl class="info-list">
-      <div><dt>卖家</dt><dd><%= product.sellerName %></dd></div>
-      <div><dt>卖家评分</dt><dd><%= Number(safeSellerReputation.stats.averageRating || 0).toFixed(2) %> / 5.00</dd></div>
-      <div><dt>库存</dt><dd><%= product.stock %></dd></div>
-      <div><dt>已售</dt><dd><%= product.salesCount != null ? product.salesCount : 0 %> 件</dd></div>
-      <div><dt>物流</dt><dd><%= product.freeShipping ? '卖家包邮' : '邮费另议' %></dd></div>
+      <div><dt data-i18n="detail.seller"><%= __('detail.seller') %></dt><dd><%= product.sellerName %></dd></div>
+      <div><dt data-i18n="detail.sellerRating"><%= __('detail.sellerRating') %></dt><dd><%= Number(safeSellerReputation.stats.averageRating || 0).toFixed(2) %> / 5.00</dd></div>
+      <div><dt data-i18n="detail.stock"><%= __('detail.stock') %></dt><dd><%= product.stock %></dd></div>
+      <div><dt data-i18n="detail.sold"><%= __('detail.sold') %></dt><dd><%= product.salesCount != null ? product.salesCount : 0 %> <%= __('product.sold') %></dd></div>
+      <div><dt data-i18n="detail.shipping"><%= __('detail.shipping') %></dt><dd><%= product.freeShipping ? '包邮' : '邮费另议' %></dd></div>
       <% if (product.condition === 'used' && product.wearGrade) { %>
-        <div><dt>成色</dt><dd><%= wearLabels[product.wearGrade] || product.wearGrade %></dd></div>
+        <div><dt data-i18n="detail.condition"><%= __('detail.condition') %></dt><dd><%= wearLabels[product.wearGrade] || product.wearGrade %></dd></div>
       <% } %>
-      <div><dt>标签</dt><dd><%= product.tags && product.tags.length ? product.tags.join(' / ') : '无' %></dd></div>
+      <div><dt data-i18n="detail.tags"><%= __('detail.tags') %></dt><dd><%= product.tags && product.tags.length ? product.tags.join(' / ') : '无' %></dd></div>
     </dl>
 
     <section class="seller-reputation-panel">
-      <h3>卖家信誉</h3>
+      <h3 data-i18n="reputation.title"><%= __('reputation.title') %></h3>
       <div class="seller-reputation-metrics">
         <span>平均评分：<strong><%= Number(safeSellerReputation.stats.averageRating || 0).toFixed(2) %></strong></span>
         <span>好评率：<strong><%= Number(safeSellerReputation.stats.goodRate || 0).toFixed(2) %>%</strong></span>
         <span>交易成功率：<strong><%= Number(safeSellerReputation.stats.successRate || 0).toFixed(2) %>%</strong></span>
       </div>
       <div class="seller-recent-reviews">
-        <h4>最近3条评价</h4>
+        <h4 data-i18n="reputation.recent"><%= __('reputation.recent') %></h4>
         <% if (safeSellerReputation.recentReviews && safeSellerReputation.recentReviews.length > 0) { %>
           <% safeSellerReputation.recentReviews.forEach(function (review) { %>
             <article class="seller-review-item">
@@ -68,38 +68,38 @@
     <section class="price-history-panel" aria-labelledby="price-history-title">
       <div class="price-stats">
         <div class="price-stat-box">
-          <dt>当前价</dt>
+          <dt data-i18n="price.current"><%= __('price.current') %></dt>
           <dd>¥<%= Number(safePriceStats.current || 0).toFixed(2) %></dd>
         </div>
         <div class="price-stat-box">
-          <dt>历史最低价</dt>
+          <dt data-i18n="price.low"><%= __('price.low') %></dt>
           <dd>¥<%= Number(safePriceStats.low || 0).toFixed(2) %></dd>
         </div>
         <div class="price-stat-box">
-          <dt>历史最高价</dt>
+          <dt data-i18n="price.high"><%= __('price.high') %></dt>
           <dd>¥<%= Number(safePriceStats.high || 0).toFixed(2) %></dd>
         </div>
       </div>
       <div class="price-history-head">
-        <h3 id="price-history-title">价格波动走势</h3>
+        <h3 id="price-history-title" data-i18n="price.historyTitle"><%= __('price.historyTitle') %></h3>
         <div class="price-history-ranges" role="group" aria-label="价格区间切换">
-          <button type="button" class="price-range-btn active" data-price-range="7d">近7天</button>
-          <button type="button" class="price-range-btn" data-price-range="30d">近30天</button>
-          <button type="button" class="price-range-btn" data-price-range="all">全部时间</button>
+          <button type="button" class="price-range-btn active" data-price-range="7d" data-i18n="price.range.7d"><%= __('price.range.7d') %></button>
+          <button type="button" class="price-range-btn" data-price-range="30d" data-i18n="price.range.30d"><%= __('price.range.30d') %></button>
+          <button type="button" class="price-range-btn" data-price-range="all" data-i18n="price.range.all"><%= __('price.range.all') %></button>
         </div>
       </div>
       <div class="price-history-chart-wrap">
         <canvas data-price-history-chart aria-label="商品价格趋势图" role="img"></canvas>
       </div>
       <p class="price-range-status" data-price-range-status></p>
-      <script id="price-history-data" type="application/json"><%- JSON.stringify(safePriceSeries) %></script>
+      <script id="price-history-data" type="application/json"><%- JSON.stringify(safePriceSeries).replace(/</g, '\\u003c') %></script>
     </section>
 
     <div class="action-row">
       <!-- Antigraity, Gemini 3.1 Pro (high), Google.：库存为0时显示已售罄 -->
       <% if (product.stock > 0) { %>
         <form action="/cart/add/<%= product._id %>" method="POST">
-          <button class="button primary" type="submit">加入购物车</button>
+          <button class="button primary" type="submit" data-i18n="action.addToCart"><%= __('action.addToCart') %></button>
         </form>
         <% if (currentUser) { %>
           <button
@@ -109,7 +109,7 @@
             data-product-id="<%= product._id %>"
             data-favorited="<%= safeFavoriteState.isFavorited ? '1' : '0' %>"
             data-favorite-id="<%= safeFavoriteState.favoriteId || '' %>">
-            <%= safeFavoriteState.isFavorited ? '已收藏' : '收藏/关注' %>
+            <%= safeFavoriteState.isFavorited ? __('action.favorite.added') : __('action.favorite.add') %>
           </button>
           <button
             class="button ghost"
@@ -118,13 +118,13 @@
             data-favorite-id="<%= safeFavoriteState.favoriteId || '' %>"
             data-alert-enabled="<%= safeFavoriteState.alertEnabled ? '1' : '0' %>"
             <%= safeFavoriteState.isFavorited ? '' : 'disabled' %>>
-            降价提醒：<%= safeFavoriteState.alertEnabled ? '已开启' : '已关闭' %>
+            <%= safeFavoriteState.alertEnabled ? __('action.favorite.alertOn') : __('action.favorite.alertOff') %>
           </button>
         <% } else { %>
           <a class="button secondary" href="/login">登录后可收藏</a>
         <% } %>
       <% } else { %>
-        <button class="button ghost" disabled>已售罄</button>
+        <button class="button ghost" disabled data-i18n="product.soldOut"><%= __('product.soldOut') %></button>
       <% } %>
       <!-- end: Antigraity, Gemini 3.1 Pro (high), Google. -->
     </div>
@@ -133,5 +133,82 @@
 
 <%- include('../partials/recommend-strip', { recommendations }) %>
 
+<div class="quick-contact">
+  <% if (currentUser) { %>
+    <a class="button ghost" href="/products/<%= product._id %>/messages">联系卖家</a>
+  <% } else { %>
+    <a class="button ghost" href="/login">登录后可咨询卖家</a>
+  <% } %>
+</div>
+
+<section class="comments-section" id="comments">
+  <div class="section-heading wide">
+    <div>
+      <p class="eyebrow">Discussion</p>
+      <h2>商品评论</h2>
+    </div>
+  </div>
+
+  <div class="comments-panel">
+    <% if (currentUser) { %>
+      <form id="comment-form" action="/products/<%= product._id %>/comments" method="POST">
+        <div class="rating-row">
+          <label>评分：</label>
+          <div class="star-input" data-star-input>
+            <% for (var i=1;i<=5;i++) { %>
+              <button type="button" class="star" data-value="<%= i %>">☆</button>
+            <% } %>
+          </div>
+          <input type="hidden" name="rating" value="5" data-rating-value>
+        </div>
+        <label>
+          评论内容
+          <textarea name="content" rows="4" required></textarea>
+        </label>
+        <label>
+          上传图片/视频
+          <input id="comment-file-input" type="file" accept="image/*,video/*" multiple>
+        </label>
+        <div id="comment-media-list" class="media-list"></div>
+        <input type="hidden" name="media" data-media-input>
+        <div class="action-row">
+          <button class="button primary" type="submit">提交评论</button>
+        </div>
+      </form>
+    <% } else { %>
+      <p><a href="/login">登录</a> 后可发表评论。</p>
+    <% } %>
+
+    <div class="comments-list">
+      <% if (comments && comments.length) { %>
+        <% comments.forEach(function (c) { %>
+          <article class="comment-item">
+            <header>
+              <strong><%= c.user && c.user.username ? c.user.username : '匿名' %></strong>
+              <span class="comment-rating"> <%= c.rating %> / 5</span>
+              <time><%= new Date(c.createdAt).toLocaleString() %></time>
+            </header>
+            <% if (c.content) { %><p><%= c.content %></p><% } %>
+            <% if (c.media && c.media.length) { %>
+              <div class="comment-media-grid">
+                <% c.media.forEach(function(m){ %>
+                  <% if (m.type === 'image') { %>
+                    <img src="<%= m.url %>" alt="comment image">
+                  <% } else { %>
+                    <video controls src="<%= m.url %>"></video>
+                  <% } %>
+                <% }) %>
+              </div>
+            <% } %>
+          </article>
+        <% }) %>
+      <% } else { %>
+        <p class="empty-state">暂无评论，成为第一个评论者吧。</p>
+      <% } %>
+    </div>
+  </div>
+</section>
+
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+<script src="/js/comments.js"></script>
 <%- include('../partials/footer') %>

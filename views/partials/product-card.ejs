@@ -2,8 +2,8 @@
 <article class="product-card">
   <a class="product-media" href="/products/<%= product._id %>">
     <img src="<%= product.imageUrl %>" alt="<%= product.name %>">
-    <span class="condition-badge <%= product.condition === 'used' ? 'used' : 'new' %>">
-      <%= product.condition==='used' ? '二手' : '新品' %>
+    <span class="condition-badge <%= product.condition === 'used' ? 'used' : 'new' %>" data-i18n="product.condition.<%= product.condition === 'used' ? 'used' : 'new' %>">
+      <%= __( 'product.condition.' + (product.condition === 'used' ? 'used' : 'new') ) %>
     </span>
   </a>
   <div class="product-body">
@@ -38,13 +38,13 @@
       </span>
     </div>
     <!-- Antigraity, Gemini 3.1 Pro (high), Google.：库存为0时卡片显示已售罄 -->
-    <% if (product.stock> 0) { %>
+      <% if (product.stock> 0) { %>
       <form action="/cart/add/<%= product._id %>" method="POST">
-        <button class="button primary full" type="submit">加入购物车</button>
+        <button class="button primary full" type="submit" data-i18n="product.addToCart"><%= __('product.addToCart') %></button>
       </form>
       <% } else { %>
-        <button class="button ghost full" disabled>已售罄</button>
-        <% } %>
+        <button class="button ghost full" disabled data-i18n="product.soldOut"><%= __('product.soldOut') %></button>
+      <% } %>
           <!-- end: Antigraity, Gemini 3.1 Pro (high), Google. -->
   </div>
 </article>

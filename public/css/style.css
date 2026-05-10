@@ -17,6 +17,23 @@
   --radius: 12px;
 }
 
+/* Dark mode overrides */
+body.dark {
+  --ink: #e6eef0;
+  --muted: #c6d7d8;
+  --soft: #9fb3b4;
+  --line: #2b3334;
+  --paper: #0f1415;
+  --panel: #0b0f10;
+  --panel-soft: rgba(11,15,16,0.6);
+  --green: #6bd3c9;
+  --green-deep: #39a99a;
+  --green-light: #7df0d6;
+  --amber: #d89a2b;
+  --red: #ff6b6b;
+  background: #080909;
+}
+
 * {
   box-sizing: border-box;
 }
@@ -330,6 +347,275 @@ textarea {
 textarea {
   resize: vertical;
 }
+
+/* Dark mode accessibility helpers: improve font rendering and contrast */
+body.dark {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  color: var(--ink);
+}
+
+/* Replace hard-coded light backgrounds with variable-driven panels in dark mode */
+body.dark .site-header,
+body.dark .filter-panel,
+body.dark .filter-fieldset,
+body.dark .filter-panel .box,
+body.dark .detail-panel,
+body.dark .app-form,
+body.dark .order-summary,
+body.dark .checkout-panel,
+body.dark .filter-panel,
+body.dark .panel {
+  background: var(--panel);
+  border-color: rgba(255,255,255,0.04);
+  box-shadow: 0 1px 6px rgba(0,0,0,0.35);
+}
+
+body.dark input,
+body.dark select,
+body.dark textarea {
+  background: var(--panel);
+  color: var(--ink);
+  border-color: rgba(255,255,255,0.06);
+}
+
+body.dark .button.ghost {
+  background: var(--panel-soft);
+  color: var(--ink);
+  border-color: rgba(255,255,255,0.06);
+}
+
+body.dark .button.secondary {
+  background: transparent;
+  color: var(--green);
+  border-color: rgba(107, 211, 201, 0.12);
+}
+
+body.dark .wear-chip,
+body.dark .shipping-badge {
+  background: rgba(255,255,255,0.03);
+  color: var(--ink);
+}
+
+/* Slight subtle text shadow can improve perceived sharpness on some screens */
+@supports (-webkit-font-smoothing: antialiased) {
+  body.dark, body.dark p, body.dark h1, body.dark h2, body.dark h3, body.dark a, body.dark label {
+    text-shadow: 0 0.3px 0 rgba(0,0,0,0.35);
+  }
+}
+
+/* Product-specific dark-mode improvements */
+body.dark .product-card {
+  background: var(--panel);
+  border-color: rgba(255,255,255,0.04);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.45);
+}
+
+body.dark .product-media,
+body.dark .detail-media {
+  background: var(--panel-soft);
+}
+
+body.dark .product-title-row h3,
+body.dark .product-title-row strong,
+body.dark .product-meta .seller-chip,
+body.dark .product-meta .opt-tag {
+  color: var(--ink);
+  font-weight: 800;
+}
+
+/* Improve legibility for product description and meta info */
+body.dark .product-body p,
+body.dark .product-meta span,
+body.dark .detail-description {
+  color: var(--muted);
+  text-shadow: none;
+}
+
+/* Make price very clear */
+body.dark .price-line {
+  color: var(--green-light);
+  text-shadow: none;
+}
+
+/* Remove subtle global text-shadow for small text that can blur on some screens */
+body.dark .product-body p,
+body.dark .info-list dt,
+body.dark .info-list dd,
+body.dark .product-meta span {
+  text-shadow: none;
+}
+
+
+/* Global comprehensive dark-mode overrides for better readability across all pages */
+body.dark {
+  /* ensure base text and backgrounds use variables defined earlier */
+  color: var(--ink);
+  background: var(--paper);
+}
+
+/* Common containers */
+body.dark .page-shell,
+body.dark .page,
+body.dark .section-heading,
+body.dark .page-footer,
+body.dark .site-header {
+  background: var(--panel);
+  color: var(--ink);
+  border-color: rgba(255,255,255,0.04);
+}
+
+body.dark .site-header {
+  box-shadow: 0 1px 8px rgba(0,0,0,0.45);
+}
+
+/* Cards, panels, lists */
+body.dark .filter-panel,
+body.dark .detail-panel,
+body.dark .order-card,
+body.dark .product-card,
+body.dark .price-stat-box,
+body.dark .price-history-panel,
+body.dark .panel,
+body.dark .checkout-panel,
+body.dark .app-form,
+body.dark .filter-fieldset,
+body.dark .info-list div,
+body.dark .summary-row,
+body.dark .summary-total {
+  background: var(--panel);
+  border-color: rgba(255,255,255,0.04);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.45);
+}
+
+/* Inputs and controls */
+body.dark input,
+body.dark select,
+body.dark textarea,
+body.dark .nav-toggle,
+body.dark .inline-form input {
+  background: var(--panel);
+  color: var(--ink);
+  border-color: rgba(255,255,255,0.06);
+}
+
+/* Links, buttons and badges */
+body.dark a,
+body.dark .text-link,
+body.dark .site-nav a {
+  color: var(--green-light);
+}
+
+body.dark .button.primary {
+  background: var(--green);
+  color: white;
+}
+
+body.dark .button.ghost,
+body.dark .button.secondary {
+  background: var(--panel-soft);
+  color: var(--ink);
+  border-color: rgba(255,255,255,0.06);
+}
+
+body.dark .eyebrow,
+body.dark .lead,
+body.dark .product-body p,
+body.dark .detail-description {
+  color: var(--muted);
+}
+
+/* Order list specifics */
+body.dark .order-card {
+  color: var(--ink);
+}
+
+body.dark .order-item-row,
+body.dark .order-card-meta,
+body.dark .order-card-foot {
+  color: var(--muted);
+}
+
+/* Footer */
+body.dark footer,
+body.dark .site-footer,
+body.dark .page-footer {
+  background: transparent;
+  color: var(--muted);
+}
+
+/* Code and monospaced text visibility */
+body.dark code,
+body.dark pre {
+  background: rgba(255,255,255,0.03);
+  color: var(--green-light);
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+/* Remove thin text shadows that may blur small fonts on some screens */
+body.dark * {
+  text-shadow: none !important;
+}
+
+/* Manage / Favorites pages: ensure panels and list items are dark in night mode */
+body.dark .manage-page,
+body.dark .manage-list,
+body.dark .manage-item,
+body.dark .manage-actions,
+body.dark .empty-state,
+body.dark .seller-dashboard-panel,
+body.dark .seller-dashboard-grid,
+body.dark .favorite-item,
+body.dark .heading-actions,
+body.dark .result-count {
+  background: var(--panel);
+  color: var(--ink);
+  border-color: rgba(255,255,255,0.04);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.45);
+}
+
+body.dark .manage-item {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  padding: 12px;
+  border-radius: 10px;
+}
+
+body.dark .manage-media {
+  background: var(--panel-soft);
+  border-radius: 8px;
+}
+
+body.dark .manage-actions .button,
+body.dark .favorite-actions .button {
+  background: var(--panel-soft);
+  color: var(--ink);
+  border-color: rgba(255,255,255,0.06);
+}
+
+/* Tables (admin user list) */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.table th,
+.table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--line);
+  text-align: left;
+}
+body.dark .table th,
+body.dark .table td {
+  background: transparent;
+  border-bottom-color: rgba(255,255,255,0.04);
+  color: var(--ink);
+}
+
+
+
 
 .button {
   display: inline-flex;

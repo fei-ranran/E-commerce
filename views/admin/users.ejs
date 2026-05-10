@@ -1,0 +1,41 @@
+<%- include('../partials/header', { title: title }) %>
+<main class="container">
+  <h1><%= title %></h1>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>用户名</th>
+        <th>邮箱</th>
+        <th>角色</th>
+        <th>状态</th>
+        <th>操作</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% if (typeof users !== 'undefined' && users) { users.forEach(function(u){ %>
+        <tr>
+          <td><%= u.username %></td>
+          <td><%= u.email || '-' %></td>
+          <td><%= u.role %></td>
+          <td><%= u.deletedAt ? '已删除' : '正常' %></td>
+          <td>
+            <% if (u.role !== 'admin' && u.role !== 'superadmin') { %>
+              <% if (currentUser && currentUser.role === 'superadmin') { %>
+                <form style="display:inline" method="post" action="/admin/users/<%= u._id %>/promote"><button type="submit">提升为管理员</button></form>
+              <% } %>
+            <% } else { %>
+              <% if (currentUser && currentUser.role === 'superadmin' && u.role === 'admin') { %>
+                <form style="display:inline" method="post" action="/admin/users/<%= u._id %>/demote"><button type="submit">降为普通用户</button></form>
+              <% } %>
+            <% } %>
+
+            <% if (!(u.role === 'superadmin')) { %>
+              <form style="display:inline" method="post" action="/admin/users/<%= u._id %>/delete"><button type="submit">删除</button></form>
+            <% } %>
+          </td>
+        </tr>
+      <% }); } %>
+    </tbody>
+  </table>
+</main>
+<%- include('../partials/footer') %>

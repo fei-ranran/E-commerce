@@ -1,5 +1,7 @@
 // Codex, GPT-5.5 High, OpenAI.
 const Product = require('../models/Product');
+const Comment = require('../models/Comment');
+const Message = require('../models/Message');
 const Favorite = require('../models/Favorite');
 const { buildFilter, buildSort } = require('../utils/productSearch');
 const { readBrowseIds, appendProductToBrowse } = require('../utils/browseHistory');
@@ -32,14 +34,14 @@ function normalizeFreeShipping(body) {
 
 function buildPublishPayload(req) {
   const condition = req.body.condition === 'used' ? 'used' : 'new';
-  const wearGrade = String(req.body.wearGrade || '').trim();
+  const wearGrade = condition === 'used' ? String(req.body.wearGrade || '').trim() : '';
   return {
     name: String(req.body.name || '').trim(),
     description: String(req.body.description || '').trim(),
     price: Number(req.body.price),
     category: String(req.body.category || '').trim(),
     condition,
-    wearGrade,
+    wearGrade: wearGrade || undefined,
     freeShipping: normalizeFreeShipping(req.body),
     imageUrl: req.body.imageUrl || '/images/product-default.svg',
     sellerName: req.currentUser ? req.currentUser.username : req.body.sellerName,
@@ -160,6 +162,11 @@ exports.detail = async (req, res) => {
   const priceInsights = buildPriceInsights(product);
   appendProductToBrowse(res, product._id, browseBefore);
 
+  const comments = await Comment.find({ product: product._id })
+    .populate('user', 'username')
+    .sort({ createdAt: -1 })
+    .lean();
+
   res.render('products/detail', {
     title: product.name,
     active: '',
@@ -177,6 +184,36 @@ exports.detail = async (req, res) => {
       low: priceInsights.lowPrice,
       high: priceInsights.highPrice
     }
+    ,
+    comments
+  });
+};
+
+exports.inbox = async (req, res) => {
+  const userId = req.currentUser && req.currentUser._id;
+  if (!userId) return res.redirect('/login');
+
+  const productIds = await Message.distinct('product', { $or: [{ from: userId }, { to: userId }] });
+
+  const conversations = await Promise.all(productIds.map(async (pid) => {
+    const last = await Message.findOne({ product: pid, $or: [{ from: userId }, { to: userId }] })
+      .sort({ createdAt: -1 })
+      .populate('from to', 'username')
+      .lean();
+    const unread = await Message.countDocuments({ product: pid, to: userId, read: false });
+    const product = await Product.findById(pid).lean();
+    return {
+      product,
+      lastMessage: last,
+      unreadCount: unread
+    };
+  }));
+
+  res.render('messages/inbox', {
+    title: '消息',
+    active: 'messages',
+    conversations,
+    currentUser: req.currentUser
   });
 };
 
@@ -200,11 +237,19 @@ exports.mine = async (req, res) => {
     getCurrentSellerDashboard(req.currentUser._id)
   ]);
 
+  // compute unread message counts per product
+  const counts = {};
+  await Promise.all(products.map(async (p) => {
+    const c = await Message.countDocuments({ product: p._id, to: req.currentUser._id, read: false });
+    counts[p._id] = c;
+  }));
+
   res.render('products/mine', {
     title: '我的发布',
     active: 'mine',
     products,
-    sellerDashboard
+    sellerDashboard,
+    messageCounts: counts
   });
 };
 
@@ -322,7 +367,7 @@ exports.update = async (req, res) => {
   product.stock = payload.stock;
   product.tags = composeFinalTags(payload);
   await product.save();
-  await notifyPriceDrop(product, oldPrice, payload.price);
+  try { await notifyPriceDrop(product, oldPrice, payload.price); } catch (_) {}
 
   res.redirect('/products/' + product._id);
 };
@@ -333,5 +378,107 @@ exports.remove = async (req, res) => {
     owner: req.currentUser._id
   });
   res.redirect('/products/mine');
+};
+
+exports.addComment = async (req, res) => {
+  const productId = req.params.id;
+  const product = await Product.findById(productId);
+  if (!product) return res.redirect('/');
+
+  const rating = Math.min(5, Math.max(1, Number(req.body.rating || 5)));
+  const content = String(req.body.content || '').trim().slice(0, 600);
+
+  const media = [];
+  // media field contains comma-separated entries like "image:/uploads/xxx.jpg,video:/uploads/yyy.mp4"
+  if (req.body.media) {
+    const raw = Array.isArray(req.body.media) ? req.body.media : String(req.body.media).split(',');
+    raw.forEach((m) => {
+      if (!m) return;
+      const parts = String(m).split(':');
+      if (parts.length >= 2) {
+        const type = parts[0] === 'video' ? 'video' : 'image';
+        // join remainder in case the url contains ':' (unlikely for our local uploads)
+        const url = parts.slice(1).join(':');
+        media.push({ url, type });
+      }
+    });
+  }
+
+  const comment = new Comment({
+    product: product._id,
+    user: req.currentUser._id,
+    rating,
+    content,
+    media
+  });
+  await comment.save();
+
+  res.redirect('/products/' + productId + '#comments');
+};
+
+exports.sendMessage = async (req, res) => {
+  const productId = req.params.id;
+  const product = await Product.findById(productId);
+  if (!product) return res.redirect('/');
+
+  const content = String(req.body.content || '').trim().slice(0, 1000);
+
+  const media = [];
+  if (req.body.media) {
+    const raw = Array.isArray(req.body.media) ? req.body.media : String(req.body.media).split(',');
+    raw.forEach((m) => {
+      if (!m) return;
+      const parts = String(m).split(':');
+      if (parts.length >= 2) {
+        const type = parts[0] === 'video' ? 'video' : 'image';
+        const url = parts.slice(1).join(':');
+        media.push({ url, type });
+      }
+    });
+  }
+
+  // determine recipient: body.to or product.owner
+  let to = req.body.to;
+  if (!to) {
+    to = product.owner ? product.owner.toString() : null;
+  }
+  if (!to) return res.redirect('/products/' + productId);
+
+  const msg = new Message({
+    product: product._id,
+    from: req.currentUser._id,
+    to,
+    content,
+    media
+  });
+  await msg.save();
+
+  // redirect to messages page
+  res.redirect('/products/' + productId + '/messages');
+};
+
+exports.viewMessages = async (req, res) => {
+  const productId = req.params.id;
+  const product = await Product.findById(productId).lean();
+  if (!product) return res.redirect('/');
+
+  // owner can see all messages for this product
+  let messages;
+  if (product.owner && req.currentUser && product.owner.toString() === req.currentUser._id.toString()) {
+    messages = await Message.find({ product: product._id }).populate('from to', 'username').sort({ createdAt: -1 }).lean();
+    // mark messages to owner as read
+    await Message.updateMany({ product: product._id, to: req.currentUser._id, read: false }, { $set: { read: true } });
+  } else {
+    // buyer can only see messages where they are participant
+    messages = await Message.find({ product: product._id, $or: [{ from: req.currentUser._id }, { to: req.currentUser._id }] }).populate('from to', 'username').sort({ createdAt: -1 }).lean();
+  }
+
+  res.render('products/messages', {
+    title: '商品咨询 - ' + (product.name || ''),
+    active: '',
+    product,
+    messages,
+    currentUser: req.currentUser
+  });
 };
 // end: Codex, GPT-5.5 High, OpenAI.

@@ -1,32 +1,88 @@
-<!-- Codex, GPT-5.5 High, OpenAI. -->
 <%- include('../partials/header', { title, active, currentUser }) %>
 
-<section class="auth-page">
-  <div class="form-copy">
-    <p class="eyebrow">Account</p>
-    <h1>登录账号</h1>
-    <p class="lead">登录后发布商品时会自动使用你的用户名作为卖家名称。</p>
-  </div>
-  <form class="app-form auth-form" action="/login" method="POST">
-    <% if (message) { %>
+<style>
+  :root{--pri:#50a3a2}
+  /* full-screen animated background */
+  .wrapper{background:linear-gradient(135deg,#50a3a2 0%,#53e3a6 100%);position:fixed;inset:0;display:flex;align-items:center;justify-content:center;overflow:hidden;z-index:0}
+  .glow{position:absolute;border-radius:50%;filter:blur(80px);pointer-events:none;z-index:0}
+  .glow-1{width:360px;height:360px;background:rgba(83,227,166,.18);top:-120px;right:-80px}
+  .glow-2{width:260px;height:260px;background:rgba(255,255,255,.08);bottom:-60px;left:-60px}
+  .bg-bubbles{position:absolute;inset:0;z-index:1;pointer-events:none}
+  .bg-bubbles li{position:absolute;list-style:none;display:block;background-color:rgba(255,255,255,.12);bottom:-220px;border-radius:50%;animation:rise 25s infinite linear}
+  .bg-bubbles li:nth-child(1){left:8%;width:48px;height:48px}
+  .bg-bubbles li:nth-child(2){left:18%;width:120px;height:120px;animation-delay:2s;animation-duration:18s}
+  .bg-bubbles li:nth-child(3){left:26%;width:60px;height:60px;animation-delay:4s}
+  .bg-bubbles li:nth-child(4){left:38%;width:80px;height:80px;animation-duration:22s;background-color:rgba(255,255,255,.22)}
+  .bg-bubbles li:nth-child(5){left:56%;width:100px;height:100px}
+  .bg-bubbles li:nth-child(6){left:70%;width:160px;height:160px;animation-delay:3s;background-color:rgba(255,255,255,.18)}
+  .bg-bubbles li:nth-child(7){left:84%;width:140px;height:140px;animation-delay:7s}
+  .bg-bubbles li:nth-child(8){left:48%;width:24px;height:24px;animation-delay:15s;animation-duration:40s}
+  .bg-bubbles li:nth-child(9){left:32%;width:14px;height:14px;animation-delay:2s;animation-duration:40s;background-color:rgba(255,255,255,.28)}
+  .bg-bubbles li:nth-child(10){left:92%;width:160px;height:160px;animation-delay:11s}
+  @keyframes rise{0%{transform:translateY(0) rotate(0deg)}100%{transform:translateY(-750px) rotate(600deg)}}
+
+  /* auth card */
+  .container{position:relative;z-index:2;max-width:760px;width:92%;padding:36px;background:rgba(255,255,255,0.98);border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.12)}
+  .auth-grid{display:flex;gap:36px;align-items:center}
+  .auth-copy{flex:1}
+  .auth-copy h1{margin:0 0 8px;font-size:28px;color:#0b0f10}
+  .auth-copy p{color:#445}
+  .auth-form{flex:1}
+  .auth-form label{display:block;margin-bottom:12px}
+  .auth-form input{width:100%;padding:10px;border:1px solid #e6e6e8;border-radius:6px}
+  .message{background:#ffecec;color:#900;padding:10px;border-radius:6px;margin-bottom:12px}
+  .button.primary{background:var(--pri);color:#fff;border:0;padding:10px 14px;border-radius:6px;cursor:pointer}
+</style>
+
+<div class="wrapper" id="loginWrapper">
+  <div class="glow glow-1"></div>
+  <div class="glow glow-2"></div>
+  <ul class="bg-bubbles"><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li></ul>
+
+  <div class="container">
+    <div class="auth-grid">
+      <div class="auth-copy">
+        <h1>欢迎回到 Cream Market</h1>
+        <p>登录你的账号，开始探索二手好物。</p>
+      </div>
+      <form class="auth-form" action="/login" method="POST">
+    <% if (typeof message !== 'undefined' && message) { %>
       <div class="message"><%= message %></div>
     <% } %>
     <label>
-      用户名
+      用户名或邮箱
       <input required type="text" name="username">
-    </label>
-    <label>
-      邮箱
-      <input type="email" name="email" >
     </label>
     <label>
       密码
       <input required type="password" name="password">
     </label>
-    <button class="button primary full" type="submit">登录</button>
-    <a class="text-link" href="/register">还没有账号，去注册</a>
+    <label>
+      验证码
+      <div style="display:flex;gap:8px;align-items:center">
+        <input required type="text" name="captcha" placeholder="输入图中字符" style="flex:1">
+        <img id="captchaImage" src="/captcha" style="height:44px;border:1px solid #ddd;border-radius:6px;cursor:pointer" title="点击刷新">
+      </div>
+    </label>
+    <button class="button primary" type="submit">登录</button>
+    <div style="margin-top:12px"><a href="/register">还没有账号？去注册</a></div>
   </form>
-</section>
+  </div>
+</div>
+
+<script>
+// mouse parallax for glows
+;(function(){
+  const g1 = document.querySelector('.glow-1');
+  const g2 = document.querySelector('.glow-2');
+  if(!g1 || !g2) return;
+  document.addEventListener('mousemove', e=>{
+    const x = (e.clientX/window.innerWidth - 0.5) * 40;
+    const y = (e.clientY/window.innerHeight - 0.5) * 40;
+    g1.style.transform = `translate(${x}px,${y}px)`;
+    g2.style.transform = `translate(${ -x*0.6 }px,${ -y*0.6 }px)`;
+  }, {passive:true});
+})();
+</script>
 
 <%- include('../partials/footer') %>
-<!-- end: Codex, GPT-5.5 High, OpenAI. -->

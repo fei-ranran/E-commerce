@@ -2,20 +2,20 @@
 <%- include('../partials/header', { title, active, currentUser }) %>
 
   <section class="cart-layout">
-    <div class="section-heading wide">
+      <div class="section-heading wide">
       <div>
-        <p class="eyebrow">Cart</p>
-        <h1>购物车</h1>
+        <p class="eyebrow" data-i18n="nav.cart"><%= __('nav.cart') %></p>
+        <h1 data-i18n="nav.cart"><%= __('nav.cart') %></h1>
       </div>
-      <% if (cart.items.length> 0) { %>
+      <% if (cart && cart.items && cart.items.length > 0) { %>
         <form action="/cart/clear" method="POST">
-          <button class="button ghost" type="submit">清空</button>
+          <button class="button ghost" type="submit" data-i18n="cart.clear"><%= __('cart.clear') %></button>
         </form>
-        <% } %>
+      <% } %>
     </div>
 
-    <% if (cart.items.length===0) { %>
-      <div class="empty-state">购物车为空，先去挑选商品。</div>
+    <% if (!cart || !cart.items || cart.items.length === 0) { %>
+      <div class="empty-state" data-i18n="cart.empty"><%= __('cart.empty') %></div>
       <% } else { %>
         <div class="cart-list">
           <% cart.items.forEach(item=> { %>
@@ -50,9 +50,9 @@
         </div>
 
         <aside class="checkout-panel">
-          <span>合计</span>
+          <span data-i18n="summary.total"><%= __('summary.total') %></span>
           <strong>¥<%= cart.total.toFixed(2) %></strong>
-          <a class="button primary" href="/orders/checkout">去结算</a>
+          <a class="button primary" href="/orders/checkout" data-i18n="cart.checkout"><%= __('cart.checkout') %></a>
         </aside>
         <% } %>
   </section>

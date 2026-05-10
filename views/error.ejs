@@ -3,12 +3,12 @@
 
   <section class="empty-state not-found">
     <p class="eyebrow">Server</p>
-    <h1>系统暂不可用</h1>
+    <h1 data-i18n="server.errorTitle"><%= __('server.errorTitle') %></h1>
     <p>请稍后重试或联系管理员。</p>
     <p class="error-message">
       <%= message %>
     </p>
-    <a class="button primary" href="/">重新尝试</a>
+    <a class="button primary" href="/" data-i18n="empty.backHome"><%= __('empty.backHome') %></a>
   </section>
 
   <%- include('partials/footer') %>

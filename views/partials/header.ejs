@@ -9,6 +9,7 @@
     <%= title %>
   </title>
   <link rel="stylesheet" href="/css/style.css">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <script src="/js/app.js" defer></script>
 </head>
 
@@ -21,19 +22,22 @@
       </a>
       <button class="nav-toggle" type="button" aria-label="打开导航" data-nav-toggle>☰</button>
       <nav class="site-nav" data-nav>
-        <a class="<%= active === 'home' ? 'active' : '' %>" href="/">商城</a>
-        <a class="<%= active === 'second' ? 'active' : '' %>" href="/second-hand">二手交易</a>
-        <a class="<%= active === 'cart' ? 'active' : '' %>" href="/cart">购物车</a>
-        <a class="<%= active === 'sell' ? 'active' : '' %>" href="/products/new">发布</a>
+        <a data-i18n="nav.home" class="<%= active === 'home' ? 'active' : '' %>" href="/"><%= __('nav.home') %></a>
+        <a data-i18n="nav.second" class="<%= active === 'second' ? 'active' : '' %>" href="/second-hand"><%= __('nav.second') %></a>
+        <a data-i18n="nav.cart" class="<%= active === 'cart' ? 'active' : '' %>" href="/cart"><%= __('nav.cart') %></a>
+        <a data-i18n="nav.sell" class="<%= active === 'sell' ? 'active' : '' %>" href="/products/new"><%= __('nav.sell') %></a>
         <% if (currentUser) { %>
           <!-- Antigravity, Claude Sonnet 4.6 (thinking), Anthropic. 新增：我的订单导航入口 -->
-          <a class="<%= active === 'orders' ? 'active' : '' %>" href="/orders/mine">我的订单</a>
+          <a data-i18n="nav.orders" class="<%= active === 'orders' ? 'active' : '' %>" href="/orders/mine"><%= __('nav.orders') %></a>
           <!-- end: Antigravity, Claude Sonnet 4.6 (thinking), Anthropic. 新增 -->
-          <% if (currentUser.role === 'admin') { %>
-            <a class="<%= active === 'admin' ? 'active' : '' %>" href="/admin/similarity-settings">管理后台</a>
+          <% if (currentUser.role === 'admin' || currentUser.role === 'superadmin') { %>
+            <a class="<%= active === 'admin' ? 'active' : '' %>" href="/admin/similarity-settings"><%= __('nav.admin') %></a>
           <% } %>
-          <a class="<%= active === 'favorites' ? 'active' : '' %>" href="/favorites">我的收藏</a>
-          <a class="<%= active === 'mine' ? 'active' : '' %>" href="/products/mine">我的发布</a>
+            <a data-i18n="nav.messages" class="<%= active === 'messages' ? 'active' : '' %>" href="/messages"><%= __('nav.messages') %></a>
+            <a data-i18n="nav.favorites" class="<%= active === 'favorites' ? 'active' : '' %>" href="/favorites"><%= __('nav.favorites') %></a>
+            <a data-i18n="nav.mine" class="<%= active === 'mine' ? 'active' : '' %>" href="/products/mine"><%= __('nav.mine') %></a>
+              <button class="nav-button" id="themeToggle" title="<%= __('toggle.theme') %>">🌙</button>
+              <button class="nav-button" id="langToggle" title="<%= __('toggle.lang') %>"><%= (lang === 'en') ? '中' : 'EN' %></button>
           <form class="inline-form" action="/logout" method="POST">
             <button class="nav-button" type="submit">
               <%= currentUser.username %> 退出
@@ -45,8 +49,8 @@
           </form>
           <!-- end: Codex, GPT-5.5 High, OpenAI. -->
           <% } else { %>
-            <a class="<%= active === 'login' ? 'active' : '' %>" href="/login">登录</a>
-            <a class="nav-strong <%= active === 'register' ? 'active' : '' %>" href="/register">注册</a>
+            <a class="<%= active === 'login' ? 'active' : '' %>" href="/login"><%= __('nav.login') %></a>
+            <a class="nav-strong <%= active === 'register' ? 'active' : '' %>" href="/register"><%= __('nav.register') %></a>
             <% } %>
       </nav>
     </div>

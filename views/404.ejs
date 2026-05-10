@@ -3,9 +3,9 @@
 
   <section class="empty-state not-found">
     <p class="eyebrow">404</p>
-    <h1>页面未找到</h1>
-    <p>请返回商城首页继续浏览商品。</p>
-    <a class="button primary" href="/">回到首页</a>
+    <h1 data-i18n="notfound.title"><%= __('notfound.title') %></h1>
+    <p data-i18n="empty.backHome"><%= __('empty.backHome') %></p>
+    <a class="button primary" href="/" data-i18n="empty.backHome"><%= __('empty.backHome') %></a>
   </section>
 
   <%- include('partials/footer') %>

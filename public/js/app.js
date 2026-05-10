@@ -8,6 +8,15 @@ if (toggle && nav) {
   });
 }
 
+// initialize UI helpers
+try{
+  // load theme/i18n UI if present
+  var s1 = document.createElement('script');
+  s1.src = '/js/ui.js';
+  s1.defer = true;
+  document.head.appendChild(s1);
+}catch(e){}
+
 var imageInput = document.querySelector('[data-image-input]');
 var imageValue = document.querySelector('[data-image-value]');
 var imagePreview = document.querySelector('[data-image-preview]');
@@ -74,12 +83,31 @@ function syncWearRow() {
   } else {
     wearRow.setAttribute('data-hidden', 'true');
     wearRow.style.display = 'none';
+    var wg = document.querySelector('[data-field="wearGrade"]');
+    if (wg) wg.value = '';
   }
 }
 
 if (conditionSelect && wearRow) {
   conditionSelect.addEventListener('change', syncWearRow);
   syncWearRow();
+}
+
+// 分类与类型联动：分类以"二手"开头时自动切到二手
+var categoryInput = document.querySelector('[data-field="category"]');
+if (categoryInput && conditionSelect) {
+  categoryInput.addEventListener('input', function () {
+    if (String(categoryInput.value || '').trim().startsWith('二手') && conditionSelect.value === 'new') {
+      conditionSelect.value = 'used';
+      syncWearRow();
+    }
+  });
+  categoryInput.addEventListener('change', function () {
+    if (String(categoryInput.value || '').trim().startsWith('二手') && conditionSelect.value === 'new') {
+      conditionSelect.value = 'used';
+      syncWearRow();
+    }
+  });
 }
 
 function initPublishFormAssist() {
@@ -136,7 +164,7 @@ function initPublishFormAssist() {
       !!(priceInput && priceInput.value) &&
       !!(stockInput && stockInput.value) &&
       !!(categoryInput && categoryInput.value.trim());
-    setCheckItem(requiredItem, requiredOk);
+    setCheckItem(requiredItem, requiredOk, requiredOk ? '必填项已填写完整。' : '请填写必填项（名称、描述、价格、库存、分类）。');
 
     var descLen = (descInput && descInput.value.trim().length) || 0;
     if (descLen < 12) {
